@@ -18,9 +18,10 @@
     "native-base": "^3.4.22",
     "react": "18.1.0",
     "react-native": "0.70.6",
+    "react-native-feather": "^1.1.2",
     "react-native-safe-area-context": "^3.4.1",
     "react-native-screens": "^3.18.2",
-    "react-native-svg": "^12.1.1"
+    "react-native-svg": "^13.6.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
