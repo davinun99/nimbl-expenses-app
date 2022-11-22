@@ -1,4 +1,4 @@
-package com.expensesapp;
+package com.nimblai.expensesapp;
 
 import android.app.Application;
 import android.content.Context;

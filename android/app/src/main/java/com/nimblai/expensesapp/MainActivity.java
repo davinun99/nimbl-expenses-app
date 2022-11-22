@@ -1,4 +1,4 @@
-package com.expensesapp;
+package com.nimblai.expensesapp;
 
 import android.os.Bundle;
 import com.facebook.react.ReactActivity;
