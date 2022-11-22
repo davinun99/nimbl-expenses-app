@@ -30,3 +30,12 @@ export const getDataFromStorage = async (key: string) => {
 		return null;
 	}
 };
+
+export const deleteDataFromStorage = async (key: string) => {
+	try {
+		await AsyncStorage.removeItem(key);
+		return true;
+	} catch (error) {
+		return false;
+	}
+};
