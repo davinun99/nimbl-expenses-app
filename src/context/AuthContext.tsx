@@ -1,4 +1,4 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useEffect, useState } from 'react';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import {
 	AUTH_OBJ_KEY,
@@ -6,7 +6,7 @@ import {
 	storeData,
 } from '../helpers/AsyncStorage';
 import axiosClient from '../helpers/Axios';
-import { UserInfo } from '../helpers/types';
+import { NimblUser, UserInfo } from '../helpers/types';
 import { Alert } from 'react-native';
 
 GoogleSignin.configure({
@@ -26,11 +26,12 @@ GoogleSignin.configure({
 });
 
 interface AuthContextInterface {
-	user: any;
+	user: UserInfo | null;
 	isAuthenticated: boolean;
 	errorMessage: string;
 	isAuthLoading: boolean;
 	getExistingUserSession: Function;
+	nimblUser: NimblUser | null;
 	googleLogin: () => void;
 }
 
@@ -41,26 +42,38 @@ interface AuthProviderProps {
 }
 
 const AuthProvider = (props: AuthProviderProps) => {
-	const [user, setUser] = useState(null);
+	const [user, setUser] = useState<UserInfo | null>(null);
 	const [isAuthenticated, setIsAuthenticated] = useState(false);
 	const [errorMessage, setErrorMessage] = useState('');
 	const [isAuthLoading, setIsAuthLoading] = useState(false);
-
+	const [nimblUser, setNimblUser] = useState<NimblUser | null>(null);
+	useEffect(() => {
+		getExistingUserSession();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 	const afterLoginHandler = async (userInfo: UserInfo) => {
 		storeData(AUTH_OBJ_KEY, userInfo);
 		const token = userInfo.tokens.accessToken;
 		axiosClient.defaults.headers.common.Authorization = `Bearer ${token}`;
+		try {
+			const userResponse = await axiosClient.get('/user');
+			setNimblUser(userResponse.data);
+		} catch (error: any) {
+			setErrorMessage(JSON.stringify(error));
+		}
 		setUser(user);
 		setIsAuthenticated(true);
 	};
 
 	const getExistingUserSession = async () => {
+		setIsAuthLoading(true);
 		const authData: UserInfo = await getDataFromStorage(AUTH_OBJ_KEY);
 		if (authData) {
 			afterLoginHandler(authData);
 		} else {
 			setErrorMessage('No token found');
 		}
+		setIsAuthLoading(false);
 	};
 	const googleLogin = async () => {
 		setIsAuthLoading(true);
@@ -87,6 +100,7 @@ const AuthProvider = (props: AuthProviderProps) => {
 				isAuthenticated,
 				errorMessage,
 				isAuthLoading,
+				nimblUser,
 				getExistingUserSession,
 				googleLogin,
 			}}>
