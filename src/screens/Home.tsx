@@ -1,11 +1,15 @@
-import { Box, FlatList, Heading } from 'native-base';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { Box, Fab, FlatList, Heading, Icon } from 'native-base';
 import React from 'react';
 import { Alert } from 'react-native';
+import { Plus } from 'react-native-feather';
+
 import ExpenseCard from '../components/ExpenseCard';
 import axiosClient from '../helpers/Axios';
 import { Expense } from '../helpers/types';
+import { AppStackParamList } from '../navigator/AppNavigator';
 
-type HomeProps = {};
+export type HomeProps = NativeStackScreenProps<AppStackParamList, 'HomeScreen'>;
 
 type HomeState = {
 	expenses: Array<Expense>;
@@ -19,11 +23,11 @@ class Home extends React.Component<HomeProps, HomeState> {
 	};
 	constructor(props: HomeProps) {
 		super(props);
-		this.setState({
+		this.state = {
 			...this.state,
 			expenses: [],
 			isLoading: true,
-		});
+		};
 		axiosClient
 			.get('/expenses')
 			.then(resp => {
@@ -34,13 +38,13 @@ class Home extends React.Component<HomeProps, HomeState> {
 				});
 			})
 			.catch(error => {
-				Alert.alert(`Error getting expenses: ${JSON.stringify(error)}`);
+				Alert.alert(`Error getting expenses: ${error.message || ''}`);
 			});
 	}
 
 	render() {
 		return (
-			<Box px="5">
+			<Box px="5" h="90%">
 				<Heading fontSize="xl" py="4">
 					Expenses
 				</Heading>
@@ -48,6 +52,14 @@ class Home extends React.Component<HomeProps, HomeState> {
 					data={this.state.expenses}
 					renderItem={item => <ExpenseCard expense={item.item} />}
 					keyExtractor={item => `expense-${item.expense_id}`}
+				/>
+				<Fab
+					size="sm"
+					icon={<Icon color="white" as={<Plus />} size="sm" />}
+					renderInPortal={false}
+					onPress={() =>
+						this.props.navigation.navigate('CreateExpenseScreen')
+					}
 				/>
 			</Box>
 		);
