@@ -1,11 +1,25 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { GoogleSigninButton } from '@react-native-google-signin/google-signin';
 import { Center, Box, Heading, VStack, Spinner } from 'native-base';
 import { StyleSheet } from 'react-native';
-import { AuthContext } from '../context/AuthContext';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-const Login = () => {
-	const { isAuthLoading, googleLogin } = useContext(AuthContext);
+import { AuthContext } from '../context/AuthContext';
+import { AppStackParamList } from '../navigator/AppNavigator';
+
+type Props = NativeStackScreenProps<AppStackParamList>;
+
+const Login = (props: Props) => {
+	const { isAuthLoading, googleLogin, isAuthenticated } =
+		useContext(AuthContext);
+	useEffect(() => {
+		if (!isAuthLoading && isAuthenticated) {
+			props.navigation.reset({
+				index: 0,
+				routes: [{ name: 'HomeScreen' }],
+			});
+		}
+	}, [isAuthenticated, isAuthLoading, props.navigation]);
 	return (
 		<Center w="100%" h="90%">
 			<Box safeArea p="2" py="8" w="90%" maxW="290" alignItems="center">
