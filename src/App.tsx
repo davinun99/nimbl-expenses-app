@@ -1,12 +1,19 @@
-import { Text } from 'native-base';
+import { NativeBaseProvider } from 'native-base';
 import React from 'react';
-import {SafeAreaView} from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import AppNavigator from './navigator/AppNavigator';
+import AuthProvider from './context/AuthContext';
+import { navigationRef } from './navigator/RootNavigator';
 
 const App = () => {
-	return(
-		<SafeAreaView>
-			<Text>Hi!</Text>
-		</SafeAreaView>
+	return (
+		<NavigationContainer ref={navigationRef}>
+			<NativeBaseProvider>
+				<AuthProvider>
+					<AppNavigator />
+				</AuthProvider>
+			</NativeBaseProvider>
+		</NavigationContainer>
 	);
 };
 export default App;
