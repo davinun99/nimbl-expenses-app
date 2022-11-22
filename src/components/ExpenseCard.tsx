@@ -6,6 +6,8 @@ import { Expense } from '../helpers/types';
 type ExpenseCardProps = {
 	expense: Expense;
 };
+const EXPENSE_URI =
+	'https://quickbooks.intuit.com/oidam/intuit/sbseg/en_us/Blog/Illustration/5bd3805355baa2fe0a68f98ad0d4e0d8.png';
 
 const ExpenseCard = ({ expense }: ExpenseCardProps) => {
 	return (
@@ -22,7 +24,7 @@ const ExpenseCard = ({ expense }: ExpenseCardProps) => {
 				<Avatar
 					size="48px"
 					source={{
-						uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBwgu1A5zgPSvfE83nurkuzNEoXs9DMNr8Ww&usqp=CAU',
+						uri: EXPENSE_URI,
 					}}
 				/>
 				<VStack>
