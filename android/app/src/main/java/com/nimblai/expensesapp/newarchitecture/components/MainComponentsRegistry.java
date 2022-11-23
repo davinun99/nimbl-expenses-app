@@ -1,4 +1,4 @@
-package com.expensesapp.newarchitecture.components;
+package com.nimblai.expensesapp.newarchitecture.components;
 
 import com.facebook.jni.HybridData;
 import com.facebook.proguard.annotations.DoNotStrip;

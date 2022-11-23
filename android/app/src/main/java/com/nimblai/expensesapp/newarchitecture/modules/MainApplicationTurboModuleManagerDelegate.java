@@ -1,4 +1,4 @@
-package com.expensesapp.newarchitecture.modules;
+package com.nimblai.expensesapp.newarchitecture.modules;
 
 import com.facebook.jni.HybridData;
 import com.facebook.react.ReactPackage;
