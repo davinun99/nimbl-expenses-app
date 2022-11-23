@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from '../screens/Home';
 import LoginScreen from '../screens/Login';
 import CreateExpenseScreen from '../screens/CreateExpense';
+import LogoutScreen from '../screens/Logout';
 
 export type AppStackParamList = {
 	HomeScreen: undefined;
@@ -10,6 +11,7 @@ export type AppStackParamList = {
 	// Feed: { sort: 'latest' | 'top' } | undefined;
 	CreateExpenseScreen: undefined;
 	LoginScreen: undefined;
+	LogoutScreen: undefined;
 };
 const AppStack = createNativeStackNavigator<AppStackParamList>();
 
@@ -21,6 +23,7 @@ const AppNavigator = () => (
 			name="CreateExpenseScreen"
 			component={CreateExpenseScreen}
 		/>
+		<AppStack.Screen name="LogoutScreen" component={LogoutScreen} />
 	</AppStack.Navigator>
 );
 export default AppNavigator;

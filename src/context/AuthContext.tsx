@@ -2,6 +2,7 @@ import React, { createContext, useEffect, useState } from 'react';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import {
 	AUTH_OBJ_KEY,
+	deleteDataFromStorage,
 	getDataFromStorage,
 	storeData,
 } from '../helpers/AsyncStorage';
@@ -33,6 +34,7 @@ interface AuthContextInterface {
 	getExistingUserSession: Function;
 	nimblUser: NimblUser | null;
 	googleLogin: () => void;
+	logout: () => void;
 }
 
 export const AuthContext = createContext({} as AuthContextInterface);
@@ -93,6 +95,10 @@ const AuthProvider = (props: AuthProviderProps) => {
 		}
 		setIsAuthLoading(false);
 	};
+	const logout = () => {
+		deleteDataFromStorage(AUTH_OBJ_KEY);
+	};
+
 	return (
 		<AuthContext.Provider
 			value={{
@@ -103,6 +109,7 @@ const AuthProvider = (props: AuthProviderProps) => {
 				nimblUser,
 				getExistingUserSession,
 				googleLogin,
+				logout,
 			}}>
 			{props.children}
 		</AuthContext.Provider>
