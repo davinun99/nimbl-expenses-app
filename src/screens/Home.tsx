@@ -1,5 +1,5 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { Box, Fab, FlatList, Heading, Icon } from 'native-base';
+import { Box, Fab, FlatList, Heading, Icon, Spinner } from 'native-base';
 import React from 'react';
 import { Alert } from 'react-native';
 import { Plus } from 'react-native-feather';
@@ -48,6 +48,7 @@ class Home extends React.Component<HomeProps, HomeState> {
 				<Heading fontSize="xl" py="4">
 					Expenses
 				</Heading>
+				{this.state.isLoading && <Spinner size="lg" />}
 				<FlatList<Expense>
 					data={this.state.expenses}
 					renderItem={item => <ExpenseCard expense={item.item} />}
