@@ -13,10 +13,10 @@ import { Alert } from 'react-native';
 GoogleSignin.configure({
 	// scopes: ['https://www.googleapis.com/auth/drive.readonly'], // what API you want to access on behalf of the user, default is email and profile
 	webClientId:
-		'973338625449-r85akl9t26re0sj9uu41utarh2pe88cp.apps.googleusercontent.com', // client ID of type WEB for your server (needed to verify user ID and offline access)
+		'973338625449-1lcpuv67uld9pb3p5h504uvtp9b8328s.apps.googleusercontent.com', // client ID of type WEB for your server (needed to verify user ID and offline access)
 	// androidClientId: '973338625449-r85akl9t26re0sj9uu41utarh2pe88cp.apps.googleusercontent.com',
-	// offlineAccess: true, // if you want to access Google API on behalf of the user FROM YOUR SERVER
-	// hostedDomain: '', // specifies a hosted domain restriction
+	offlineAccess: false, // if you want to access Google API on behalf of the user FROM YOUR SERVER
+	hostedDomain: 'nimbl.ai', // specifies a hosted domain restriction
 	// forceCodeForRefreshToken: true, // [Android] related to `serverAuthCode`, read the docs link below *.
 	// accountName: '', // [Android] specifies an account name on the device that should be used
 	iosClientId:
@@ -71,7 +71,7 @@ const AuthProvider = (props: AuthProviderProps) => {
 		setIsAuthLoading(true);
 		const authData: UserInfo = await getDataFromStorage(AUTH_OBJ_KEY);
 		if (authData) {
-			afterLoginHandler(authData);
+			await afterLoginHandler(authData);
 		} else {
 			setErrorMessage('No token found');
 		}
@@ -88,7 +88,7 @@ const AuthProvider = (props: AuthProviderProps) => {
 					...googleUser,
 					tokens,
 				};
-				afterLoginHandler(userInfo);
+				await afterLoginHandler(userInfo);
 			}
 		} catch (error) {
 			Alert.alert('Error logging in, please try again later.');
