@@ -17,11 +17,26 @@ const AppStack = createNativeStackNavigator<AppStackParamList>();
 
 const AppNavigator = () => (
 	<AppStack.Navigator initialRouteName="LoginScreen">
-		<AppStack.Screen name="LoginScreen" component={LoginScreen} />
-		<AppStack.Screen name="HomeScreen" component={HomeScreen} />
+		<AppStack.Screen
+			name="LoginScreen"
+			component={LoginScreen}
+			options={{
+				title: 'Login',
+			}}
+		/>
+		<AppStack.Screen
+			name="HomeScreen"
+			component={HomeScreen}
+			options={{
+				title: 'Home',
+			}}
+		/>
 		<AppStack.Screen
 			name="CreateExpenseScreen"
 			component={CreateExpenseScreen}
+			options={{
+				title: 'Create expense',
+			}}
 		/>
 		<AppStack.Screen name="LogoutScreen" component={LogoutScreen} />
 	</AppStack.Navigator>

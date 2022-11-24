@@ -7,7 +7,7 @@ import {
 	storeData,
 } from '../helpers/AsyncStorage';
 import axiosClient from '../helpers/Axios';
-import { NimblUser, UserInfo } from '../helpers/types';
+import { NimblUser, ProviderProps, UserInfo } from '../helpers/types';
 import { Alert } from 'react-native';
 
 GoogleSignin.configure({
@@ -39,16 +39,13 @@ interface AuthContextInterface {
 
 export const AuthContext = createContext({} as AuthContextInterface);
 
-interface AuthProviderProps {
-	children: React.ReactNode;
-}
-
-const AuthProvider = (props: AuthProviderProps) => {
+const AuthProvider = (props: ProviderProps) => {
 	const [user, setUser] = useState<UserInfo | null>(null);
 	const [isAuthenticated, setIsAuthenticated] = useState(false);
 	const [errorMessage, setErrorMessage] = useState('');
 	const [isAuthLoading, setIsAuthLoading] = useState(false);
 	const [nimblUser, setNimblUser] = useState<NimblUser | null>(null);
+
 	useEffect(() => {
 		getExistingUserSession();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -95,8 +92,15 @@ const AuthProvider = (props: AuthProviderProps) => {
 		}
 		setIsAuthLoading(false);
 	};
-	const logout = () => {
-		deleteDataFromStorage(AUTH_OBJ_KEY);
+	const logout = async () => {
+		setIsAuthLoading(true);
+
+		setIsAuthenticated(false);
+		setNimblUser(null);
+		setUser(null);
+		await deleteDataFromStorage(AUTH_OBJ_KEY);
+
+		setIsAuthLoading(false);
 	};
 
 	return (

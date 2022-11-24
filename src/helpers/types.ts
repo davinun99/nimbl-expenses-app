@@ -13,6 +13,9 @@ type KPI = {
 	kpi_level: 1;
 	kpi_name: 'Calls booked';
 };
+export type ProviderProps = {
+	children: React.ReactNode;
+};
 export type NimblUser = {
 	city: string;
 	kpi: Array<KPI>;
@@ -41,6 +44,14 @@ export type ExpensePayMethod = {
 	payment_method_id: number;
 };
 
+export type NewExpense = {
+	amount: number | null;
+	expense_category_id: string;
+	expense_currency: string;
+	expense_date: string;
+	expense_description: string;
+	expense_pay_method_id: string;
+};
 export type Expense = {
 	amount: number;
 	expense_category: ExpenseCategory | undefined;

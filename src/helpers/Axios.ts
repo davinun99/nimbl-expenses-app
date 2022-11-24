@@ -1,6 +1,6 @@
 import axios, { AxiosError } from 'axios';
 import { Alert } from 'react-native';
-import { navigationRef } from '../navigator/RootNavigator';
+import * as RootNavigation from '../navigator/RootNavigator';
 import { AUTH_OBJ_KEY, deleteDataFromStorage } from './AsyncStorage';
 // import * as RootNavigation from '../navigator/RootNavigator';
 
@@ -26,11 +26,13 @@ const sessionCheckingInterceptor = async (error: AxiosError) => {
 	if (error.response?.status === 401) {
 		Alert.alert('Your session has expired, please re-login');
 		deleteDataFromStorage(AUTH_OBJ_KEY);
-		navigationRef.navigate('LogoutScreen');
+		RootNavigation.navigate('LogoutScreen', null);
+		return Promise.resolve({ data: [] });
 	} else if (error.response?.status === 403) {
 		Alert.alert(
 			`You dont have pemission to invoke this endpoint: '${error.response.config.url}'`,
 		);
+		return Promise.resolve({ data: [] });
 	}
 	return Promise.reject(error);
 };

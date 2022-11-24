@@ -49,6 +49,10 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>We use camera permission to upload expenses files</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>We use library permission to upload expenses files</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
 	<key>UILaunchStoryboardName</key>
