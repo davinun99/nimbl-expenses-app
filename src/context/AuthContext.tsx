@@ -49,6 +49,7 @@ const AuthProvider = (props: AuthProviderProps) => {
 	const [errorMessage, setErrorMessage] = useState('');
 	const [isAuthLoading, setIsAuthLoading] = useState(false);
 	const [nimblUser, setNimblUser] = useState<NimblUser | null>(null);
+
 	useEffect(() => {
 		getExistingUserSession();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -95,8 +96,15 @@ const AuthProvider = (props: AuthProviderProps) => {
 		}
 		setIsAuthLoading(false);
 	};
-	const logout = () => {
-		deleteDataFromStorage(AUTH_OBJ_KEY);
+	const logout = async () => {
+		setIsAuthLoading(true);
+
+		setIsAuthenticated(false);
+		setNimblUser(null);
+		setUser(null);
+		await deleteDataFromStorage(AUTH_OBJ_KEY);
+
+		setIsAuthLoading(false);
 	};
 
 	return (
