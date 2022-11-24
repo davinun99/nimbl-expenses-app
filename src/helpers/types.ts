@@ -41,6 +41,14 @@ export type ExpensePayMethod = {
 	payment_method_id: number;
 };
 
+export type NewExpense = {
+	amount: number | null;
+	expense_category_id: string;
+	expense_currency: string;
+	expense_date: string;
+	expense_description: string;
+	expense_pay_method_id: number | null;
+};
 export type Expense = {
 	amount: number;
 	expense_category: ExpenseCategory | undefined;
