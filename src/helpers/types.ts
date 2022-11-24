@@ -13,6 +13,9 @@ type KPI = {
 	kpi_level: 1;
 	kpi_name: 'Calls booked';
 };
+export type ProviderProps = {
+	children: React.ReactNode;
+};
 export type NimblUser = {
 	city: string;
 	kpi: Array<KPI>;

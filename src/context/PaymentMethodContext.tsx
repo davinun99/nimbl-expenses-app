@@ -1,7 +1,7 @@
 import { AxiosError } from 'axios';
 import React, { createContext, useState } from 'react';
 import axiosClient from '../helpers/Axios';
-import { ExpensePayMethod } from '../helpers/types';
+import { ExpensePayMethod, ProviderProps } from '../helpers/types';
 
 interface PayMethodContextInterface {
 	paymentMethods: ExpensePayMethod[];
@@ -11,10 +11,7 @@ interface PayMethodContextInterface {
 }
 export const PayMethodContext = createContext({} as PayMethodContextInterface);
 
-interface PayMethodProviderProps {
-	children: React.ReactNode;
-}
-const PayMethodProvider = (props: PayMethodProviderProps) => {
+const PayMethodProvider = (props: ProviderProps) => {
 	const [paymentMethods, setPaymentMethods] = useState<ExpensePayMethod[]>(
 		[],
 	);

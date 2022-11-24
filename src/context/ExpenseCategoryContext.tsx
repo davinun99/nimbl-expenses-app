@@ -1,6 +1,6 @@
 import React, { createContext, useState } from 'react';
 import axiosClient from '../helpers/Axios';
-import { ExpenseCategory } from '../helpers/types';
+import { ExpenseCategory, ProviderProps } from '../helpers/types';
 import { AxiosError } from 'axios';
 
 interface CategoryContextInterface {
@@ -15,11 +15,7 @@ export const ExpendCategoryContext = createContext(
 	{} as CategoryContextInterface,
 );
 
-interface ExpenseProviderProps {
-	children: React.ReactNode;
-}
-
-const ExpenseCategoryProvider = (props: ExpenseProviderProps) => {
+const ExpenseCategoryProvider = (props: ProviderProps) => {
 	const [categories, setCategories] = useState<ExpenseCategory[]>([]);
 	const [categoriesAreLoading, setCategoriesAreLoading] = useState(false);
 	const [categoryErrorMessage, setCategoryErrorMessage] = useState('');

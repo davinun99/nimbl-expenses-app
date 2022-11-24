@@ -1,6 +1,6 @@
 import React, { createContext, useState } from 'react';
 import axiosClient from '../helpers/Axios';
-import { Expense } from '../helpers/types';
+import { Expense, ProviderProps } from '../helpers/types';
 import { AxiosError } from 'axios';
 
 interface ExpenseContextInterface {
@@ -13,11 +13,7 @@ interface ExpenseContextInterface {
 
 export const ExpenseContext = createContext({} as ExpenseContextInterface);
 
-interface ExpenseProviderProps {
-	children: React.ReactNode;
-}
-
-const ExpenseProvider = (props: ExpenseProviderProps) => {
+const ExpenseProvider = (props: ProviderProps) => {
 	const [expenses, setExpenses] = useState<Expense[]>([]);
 	const [expensesAreLoading, setExpensesAreLoading] = useState(false);
 	const [expenseErrorMessage, setExpenseErrorMessage] = useState('');
