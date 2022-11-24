@@ -50,7 +50,7 @@ export type NewExpense = {
 	expense_currency: string;
 	expense_date: string;
 	expense_description: string;
-	expense_pay_method_id: number | null;
+	expense_pay_method_id: string;
 };
 export type Expense = {
 	amount: number;
