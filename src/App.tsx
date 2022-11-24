@@ -4,13 +4,22 @@ import { NavigationContainer } from '@react-navigation/native';
 import AppNavigator from './navigator/AppNavigator';
 import AuthProvider from './context/AuthContext';
 import { navigationRef } from './navigator/RootNavigator';
+import ExpenseProvider from './context/ExpenseContext';
+import ExpenseCategoryProvider from './context/ExpenseCategoryContext';
+import PayMethodProvider from './context/PaymentMethodContext';
 
 const App = () => {
 	return (
 		<NavigationContainer ref={navigationRef}>
 			<NativeBaseProvider>
 				<AuthProvider>
-					<AppNavigator />
+					<ExpenseCategoryProvider>
+						<PayMethodProvider>
+							<ExpenseProvider>
+								<AppNavigator />
+							</ExpenseProvider>
+						</PayMethodProvider>
+					</ExpenseCategoryProvider>
 				</AuthProvider>
 			</NativeBaseProvider>
 		</NavigationContainer>
