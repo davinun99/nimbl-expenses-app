@@ -27,13 +27,14 @@ const sessionCheckingInterceptor = async (error: AxiosError) => {
 		Alert.alert('Your session has expired, please re-login');
 		deleteDataFromStorage(AUTH_OBJ_KEY);
 		RootNavigation.navigate('LogoutScreen', null);
+		return Promise.resolve({ data: [] });
 	} else if (error.response?.status === 403) {
 		Alert.alert(
 			`You dont have pemission to invoke this endpoint: '${error.response.config.url}'`,
 		);
+		return Promise.resolve({ data: [] });
 	}
-	return Promise.resolve(null);
-	// return Promise.reject(error);
+	return Promise.reject(error);
 };
 axiosClient.interceptors.response.use(
 	(response: any) => response,
