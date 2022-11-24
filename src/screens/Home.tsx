@@ -1,6 +1,6 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { Box, Fab, FlatList, Heading, Icon, Spinner } from 'native-base';
-import React, { useContext, useEffect, useState } from 'react';
+import { Box, Fab, FlatList, Heading, Icon } from 'native-base';
+import React, { useContext } from 'react';
 import { StyleSheet } from 'react-native';
 import { Plus } from 'react-native-feather';
 
@@ -13,22 +13,12 @@ export type HomeProps = NativeStackScreenProps<AppStackParamList, 'HomeScreen'>;
 const Home = ({ navigation }: HomeProps) => {
 	const { expenses, expensesAreLoading, getExpenses } =
 		useContext(ExpenseContext);
-	const [isInitialLoad, setIsInitialLoad] = useState(true);
-	useEffect(() => {
-		const initCmp = async () => {
-			await getExpenses();
-			setIsInitialLoad(false);
-		};
-		initCmp();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
 
 	return (
 		<Box px="5" h="100%">
 			<Heading fontSize="xl" py="4">
 				Expenses
 			</Heading>
-			{isInitialLoad && <Spinner color="white" />}
 			<FlatList<Expense>
 				data={expenses}
 				renderItem={item => <ExpenseCard expense={item.item} />}

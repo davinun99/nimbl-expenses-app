@@ -7,6 +7,7 @@ import { navigationRef } from './navigator/RootNavigator';
 import ExpenseProvider from './context/ExpenseContext';
 import ExpenseCategoryProvider from './context/ExpenseCategoryContext';
 import PayMethodProvider from './context/PaymentMethodContext';
+import InitialLoaderProvider from './context/InitialLoaderContext';
 
 const App = () => {
 	return (
@@ -16,7 +17,9 @@ const App = () => {
 					<ExpenseCategoryProvider>
 						<PayMethodProvider>
 							<ExpenseProvider>
-								<AppNavigator />
+								<InitialLoaderProvider>
+									<AppNavigator />
+								</InitialLoaderProvider>
 							</ExpenseProvider>
 						</PayMethodProvider>
 					</ExpenseCategoryProvider>
