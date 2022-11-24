@@ -15,6 +15,7 @@ import { ActivityIndicator } from 'react-native';
 import { Asset } from 'react-native-image-picker';
 import AlertComponent from '../components/AlertComponent';
 import ImagePicker from '../components/ImagePicker';
+import InlineDatePicker from '../components/InlineDatePicker';
 import { ExpendCategoryContext } from '../context/ExpenseCategoryContext';
 import { ExpenseContext } from '../context/ExpenseContext';
 import { PayMethodContext } from '../context/PaymentMethodContext';
@@ -45,6 +46,7 @@ const CreateExpense = ({ navigation }: CreateExpenseProps) => {
 		expense_date: new Date().toISOString().substring(0, 10),
 		expense_pay_method_id: '',
 	});
+	const [expDate, setExpDate] = useState(new Date());
 	const {
 		expensesAreLoading,
 		expenseErrorMessage,
@@ -95,7 +97,7 @@ const CreateExpense = ({ navigation }: CreateExpenseProps) => {
 		};
 		formData.append('expense_description', expense.expense_description);
 		formData.append('expense_category_id', expense.expense_category_id);
-		formData.append('expense_date', expense.expense_date);
+		formData.append('expense_date', expDate.toISOString().substring(0, 10));
 		formData.append('amount', expense.amount);
 		formData.append('expense_currency', expense.expense_currency);
 		formData.append('files', file);
@@ -171,6 +173,7 @@ const CreateExpense = ({ navigation }: CreateExpenseProps) => {
 						</Select>
 					</FormControl>
 				</HStack>
+				{/* Date picker */}
 				<FormControl mt={4}>
 					<FormControl.Label
 						_text={{
@@ -178,16 +181,13 @@ const CreateExpense = ({ navigation }: CreateExpenseProps) => {
 						}}>
 						Date
 					</FormControl.Label>
-					<Input
-						value={expense.expense_date}
-						onChangeText={value =>
-							handleChange('expense_date', value)
-						}
-						bgColor="white"
-						keyboardType="numeric"
-						size="lg"
+					<InlineDatePicker
+						value={expDate}
+						setValue={setExpDate}
+						placeholder={expDate.toISOString().substring(0, 10)}
 					/>
 				</FormControl>
+				{/* Category Select */}
 				<FormControl mt={4} isRequired>
 					<FormControl.Label
 						_text={{
@@ -212,6 +212,7 @@ const CreateExpense = ({ navigation }: CreateExpenseProps) => {
 						))}
 					</Select>
 				</FormControl>
+				{/* Payment Method select */}
 				<FormControl mt={4} isRequired>
 					<FormControl.Label
 						_text={{
@@ -236,6 +237,7 @@ const CreateExpense = ({ navigation }: CreateExpenseProps) => {
 						))}
 					</Select>
 				</FormControl>
+				{/* Document picker */}
 				<FormControl my={4} isRequired>
 					<FormControl.Label
 						_text={{
