@@ -15,8 +15,8 @@ const Home = ({ navigation }: HomeProps) => {
 		useContext(ExpenseContext);
 
 	return (
-		<Box px="5" h="100%">
-			<Heading fontSize="xl" py="4">
+		<Box px="5" h="100%" bgColor="white">
+			<Heading fontSize="2xl" py="4">
 				Expenses
 			</Heading>
 			<FlatList<Expense>
