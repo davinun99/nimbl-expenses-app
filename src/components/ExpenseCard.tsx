@@ -1,4 +1,3 @@
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import {
 	Box,
 	HStack,
@@ -11,22 +10,17 @@ import {
 import React from 'react';
 import { strToFormattedDate } from '../helpers';
 import { Expense } from '../helpers/types';
-import { AppStackParamList } from '../navigator/AppNavigator';
 
-type ExpenseCardProps = NativeStackScreenProps<
-	AppStackParamList,
-	'HomeScreen'
-> & {
+type ExpenseCardProps = {
 	expense: Expense;
+	navigateToDetailScreen: (expenseId: number) => void;
 };
 const EXPENSE_URI =
 	'https://quickbooks.intuit.com/oidam/intuit/sbseg/en_us/Blog/Illustration/5bd3805355baa2fe0a68f98ad0d4e0d8.png';
 
-const ExpenseCard = ({ expense, navigation }: ExpenseCardProps) => {
+const ExpenseCard = ({ expense, navigateToDetailScreen }: ExpenseCardProps) => {
 	const goToDetail = () => {
-		navigation.navigate('ExpenseDetailScreen', {
-			expenseId: expense.expense_id,
-		});
+		navigateToDetailScreen(expense.expense_id);
 	};
 	return (
 		<Pressable onPress={goToDetail}>
