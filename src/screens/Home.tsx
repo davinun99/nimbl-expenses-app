@@ -10,7 +10,7 @@ import { Expense } from '../helpers/types';
 import { AppStackParamList } from '../navigator/AppNavigator';
 
 export type HomeProps = NativeStackScreenProps<AppStackParamList, 'HomeScreen'>;
-const Home = ({ navigation }: HomeProps) => {
+const Home = ({ navigation, route }: HomeProps) => {
 	const { expenses, expensesAreLoading, getExpenses } =
 		useContext(ExpenseContext);
 
@@ -21,7 +21,13 @@ const Home = ({ navigation }: HomeProps) => {
 			</Heading>
 			<FlatList<Expense>
 				data={expenses}
-				renderItem={item => <ExpenseCard expense={item.item} />}
+				renderItem={item => (
+					<ExpenseCard
+						expense={item.item}
+						navigation={navigation}
+						route={route}
+					/>
+				)}
 				keyExtractor={item => `expense-${item.expense_id}`}
 				onRefresh={getExpenses}
 				refreshing={expensesAreLoading}
