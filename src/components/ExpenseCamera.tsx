@@ -68,7 +68,7 @@ const ExpenseCamera = ({ snapshot, setSnapshot }: Props) => {
 		setSnapshot(photo);
 	};
 	return (
-		<Box>
+		<Box style={s.mainContainer}>
 			<AlertComponent
 				show={alertIsVisible}
 				setShow={setAlertIsVisible}
@@ -79,7 +79,7 @@ const ExpenseCamera = ({ snapshot, setSnapshot }: Props) => {
 				<>
 					<View style={s.mediaContainer}>
 						{snapshot ? (
-							<Box position="relative">
+							<Box position="relative" h="100%" mb={3}>
 								<Pressable
 									style={s.closeBtn}
 									bgColor="primary.600"
@@ -99,7 +99,7 @@ const ExpenseCamera = ({ snapshot, setSnapshot }: Props) => {
 								/>
 							</Box>
 						) : (
-							<View>
+							<Box h="100%">
 								<Box w="100%" h="100%" style={s.camContainer}>
 									<Camera
 										style={StyleSheet.absoluteFill}
@@ -118,7 +118,7 @@ const ExpenseCamera = ({ snapshot, setSnapshot }: Props) => {
 										/>
 									</Button>
 								</Center>
-							</View>
+							</Box>
 						)}
 					</View>
 				</>
@@ -131,6 +131,9 @@ const ExpenseCamera = ({ snapshot, setSnapshot }: Props) => {
 const { height } = Dimensions.get('window');
 
 const s = StyleSheet.create({
+	mainContainer: {
+		marginBottom: 35,
+	},
 	mediaContainer: {
 		width: '100%',
 		height: height / 2,
