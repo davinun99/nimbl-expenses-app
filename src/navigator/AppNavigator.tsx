@@ -6,6 +6,7 @@ import CreateExpenseScreen from '../screens/CreateExpense';
 import LogoutScreen from '../screens/Logout';
 import ExpenseDetailScreen from '../components/ExpenseDetail';
 import HomeScreen from '../screens/Home';
+import NavMenu from '../components/NavMenu';
 
 export type AppStackParamList = {
 	HomeScreen: undefined;
@@ -20,7 +21,14 @@ export type AppStackParamList = {
 const AppStack = createNativeStackNavigator<AppStackParamList>();
 
 const AppNavigator = () => (
-	<AppStack.Navigator initialRouteName="LoginScreen">
+	<AppStack.Navigator
+		initialRouteName="ExpensesScreen"
+		screenOptions={({ navigation }) => ({
+			headerRight: props => (
+				<NavMenu {...props} navigation={navigation} />
+			),
+			headerBackVisible: true,
+		})}>
 		<AppStack.Screen
 			name="LoginScreen"
 			component={LoginScreen}
