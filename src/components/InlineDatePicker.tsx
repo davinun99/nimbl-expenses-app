@@ -1,7 +1,7 @@
-import { Text, TouchableOpacity } from 'react-native';
+import { TouchableOpacity } from 'react-native';
 import React, { useState } from 'react';
 import DatePicker from 'react-native-date-picker';
-import { Box } from 'native-base';
+import { Box, Text } from 'native-base';
 type InlineDatePickerProps = {
 	value: Date;
 	setValue: (value: Date) => void;
@@ -37,7 +37,9 @@ const InlineDatePicker = ({
 			padding={3}
 			borderRadius={3}>
 			<TouchableOpacity onPress={handleSetDatePress}>
-				<Text>{value ? getFormatedDate(value) : placeholder}</Text>
+				<Text color="black">
+					{value ? getFormatedDate(value) : placeholder}
+				</Text>
 			</TouchableOpacity>
 			<DatePicker
 				modal
