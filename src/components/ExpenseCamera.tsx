@@ -13,17 +13,17 @@ import {
 	PhotoFile,
 	useCameraDevices,
 } from 'react-native-vision-camera';
-import { StyleSheet, Linking, Dimensions, View } from 'react-native';
+import { StyleSheet, Linking, Dimensions, View, Alert } from 'react-native';
 import * as Feather from 'react-native-feather';
 import AlertComponent from './AlertComponent';
 
-type Props = {};
-const CreateExpenseWithCamera = ({}: Props) => {
+type Props = {
+	snapshot: PhotoFile | null | undefined;
+	setSnapshot: (ss: PhotoFile | null | undefined) => void;
+};
+const ExpenseCamera = ({ snapshot, setSnapshot }: Props) => {
 	const [isAuthorized, setIsAuthorized] = useState(false);
 	const [alertIsVisible, setAlertIsVisible] = useState(false);
-	const [snapshot, setSnapshot] = useState<PhotoFile | null | undefined>(
-		null,
-	);
 
 	const cameraRef = useRef<Camera>(null);
 	const devices = useCameraDevices('wide-angle-camera');
@@ -43,10 +43,19 @@ const CreateExpenseWithCamera = ({}: Props) => {
 				handleAuth(cameraPermission === 'authorized');
 			} else if (['restricted', 'denied'].includes(cameraPermission)) {
 				handleAuth(false);
-				Linking.openSettings();
+				Alert.alert(
+					'Missing permissions',
+					'We need you to give us access to your camera in order to save the expense document',
+					[
+						{
+							text: 'Ok',
+							onPress: () => Linking.openSettings(),
+							style: 'default',
+						},
+						{ text: 'No', style: 'destructive' },
+					],
+				);
 			}
-			// const _devices = await Camera.getAvailableCameraDevices();
-			// console.log(_devices);
 		};
 		initialLoad();
 	}, []);
@@ -58,7 +67,6 @@ const CreateExpenseWithCamera = ({}: Props) => {
 		});
 		setSnapshot(photo);
 	};
-
 	return (
 		<Box>
 			<AlertComponent
@@ -91,26 +99,28 @@ const CreateExpenseWithCamera = ({}: Props) => {
 								/>
 							</Box>
 						) : (
-							<Box w="100%" h="100%" style={s.camContainer}>
-								<Camera
-									style={StyleSheet.absoluteFill}
-									device={device}
-									isActive={true}
-									photo
-									ref={cameraRef}
-								/>
-							</Box>
+							<View>
+								<Box w="100%" h="100%" style={s.camContainer}>
+									<Camera
+										style={StyleSheet.absoluteFill}
+										device={device}
+										isActive={true}
+										photo
+										ref={cameraRef}
+									/>
+								</Box>
+								<Center mt={-5}>
+									<Button onPress={handleCapture}>
+										<Icon
+											color="white"
+											as={<Feather.Camera />}
+											size="sm"
+										/>
+									</Button>
+								</Center>
+							</View>
 						)}
 					</View>
-					<Center mt={5}>
-						<Button onPress={handleCapture}>
-							<Icon
-								color="white"
-								as={<Feather.Camera />}
-								size="sm"
-							/>
-						</Button>
-					</Center>
 				</>
 			) : (
 				<Spinner mt={5} />
@@ -142,4 +152,4 @@ const s = StyleSheet.create({
 		borderRadius: 40,
 	},
 });
-export default CreateExpenseWithCamera;
+export default ExpenseCamera;
