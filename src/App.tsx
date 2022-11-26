@@ -1,5 +1,5 @@
-import { NativeBaseProvider, extendTheme } from 'native-base';
 import React from 'react';
+import { NativeBaseProvider, extendTheme } from 'native-base';
 import { NavigationContainer } from '@react-navigation/native';
 import AppNavigator from './navigator/AppNavigator';
 import AuthProvider from './context/AuthContext';
