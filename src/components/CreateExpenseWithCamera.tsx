@@ -60,17 +60,33 @@ const CreateExpenseWithCamera = () => {
 		}
 		return errors.length === 0;
 	};
+	const getFile = () => {
+		if (snapshot) {
+			const lastBarPos = snapshot.path.lastIndexOf('/');
+			const name = snapshot.path.substring(lastBarPos + 1);
+			let type = name.substring(name.lastIndexOf('.') + 1);
+			if (type === 'jpg') {
+				type = 'jpeg';
+			}
+			return {
+				uri: `file://${snapshot.path}`,
+				name,
+				type: `image/${type}`,
+			};
+		} else {
+			return {
+				uri: '',
+				name: '',
+				type: '',
+			};
+		}
+	};
 	const handleSave = async () => {
 		if (!validate() || !snapshot) {
 			return;
 		}
 		const formData = new FormData();
-		const file = {
-			// 	uri: assetFile.uri,
-			// 	name: assetFile.fileName,
-			// 	type: assetFile.type,
-			// 	contentType: assetFile.type,
-		};
+		const file = getFile();
 		formData.append('expense_description', expense.expense_description);
 		formData.append('expense_category_id', expense.expense_category_id);
 		formData.append('expense_date', expDate.toISOString().substring(0, 10));
@@ -83,14 +99,13 @@ const CreateExpenseWithCamera = () => {
 			Alert.alert('Succesfully created expense!');
 		}
 	};
-
 	return (
 		<Box px="5" w="100%" h="100%" bgColor="white">
 			<Heading fontSize="2xl" py="4">
 				Create Expense
 			</Heading>
 			<ExpenseCamera snapshot={snapshot} setSnapshot={setSnapshot} />
-			<VStack>
+			<VStack mb={10}>
 				<FormControl isRequired>
 					<FormControl.Label
 						_text={{

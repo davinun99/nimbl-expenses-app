@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Pressable } from 'react-native';
 import { HamburgerIcon, Menu, Box } from 'native-base';
 import { HeaderButtonProps } from '@react-navigation/native-stack/lib/typescript/src/types';
+import { AuthContext } from '../context/AuthContext';
 // import { AppStackParamList } from '../navigator/AppNavigator';
 
 type Props = HeaderButtonProps & {
@@ -24,6 +25,10 @@ const NavMenu = ({ navigation }: Props) => {
 			onPress: () => navigation?.navigate('LogoutScreen'),
 		},
 	];
+	const { isAuthenticated } = useContext(AuthContext);
+	if (!isAuthenticated) {
+		return null;
+	}
 	return (
 		<Box>
 			<Menu

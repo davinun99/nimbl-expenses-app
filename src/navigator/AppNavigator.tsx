@@ -22,7 +22,7 @@ const AppStack = createNativeStackNavigator<AppStackParamList>();
 
 const AppNavigator = () => (
 	<AppStack.Navigator
-		initialRouteName="ExpensesScreen"
+		initialRouteName="LoginScreen"
 		screenOptions={({ navigation }) => ({
 			headerRight: props => (
 				<NavMenu {...props} navigation={navigation} />
