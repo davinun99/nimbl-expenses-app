@@ -8,7 +8,8 @@ import ExpenseProvider from './context/ExpenseContext';
 import ExpenseCategoryProvider from './context/ExpenseCategoryContext';
 import PayMethodProvider from './context/PaymentMethodContext';
 import InitialLoaderProvider from './context/InitialLoaderContext';
-
+//https://mycolor.space/?hex=%23E71747&sub=1
+//Natural Palette: #E71747, #BD8181, #FFF5F4, #F3EED9
 const newColorTheme = {
 	brand: {
 		50: '#fff1f2',
@@ -34,6 +35,9 @@ const newColorTheme = {
 		800: '#a30e38',
 		900: '#8b1037',
 	},
+	// secondary: {
+	// 	600: '#0090B3',
+	// },
 };
 const theme = extendTheme({ colors: newColorTheme });
 
