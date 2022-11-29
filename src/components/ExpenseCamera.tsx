@@ -32,32 +32,32 @@ const ExpenseCamera = ({ snapshot, setSnapshot }: Props) => {
 		setIsAuthorized(isOk);
 		setAlertIsVisible(!isOk);
 	};
-
+	const initialLoad = async () => {
+		let cameraPermission = await Camera.getCameraPermissionStatus();
+		if (cameraPermission === 'authorized') {
+			handleAuth(true);
+		} else if (cameraPermission === 'not-determined') {
+			cameraPermission = await Camera.requestCameraPermission();
+			handleAuth(cameraPermission === 'authorized');
+		} else if (['restricted', 'denied'].includes(cameraPermission)) {
+			handleAuth(false);
+			Alert.alert(
+				'Missing permissions',
+				'We need you to give us access to your camera in order to save the expense document',
+				[
+					{
+						text: 'Ok',
+						onPress: () => Linking.openSettings(),
+						style: 'default',
+					},
+					{ text: 'No', style: 'destructive' },
+				],
+			);
+		}
+	};
 	useEffect(() => {
-		const initialLoad = async () => {
-			let cameraPermission = await Camera.getCameraPermissionStatus();
-			if (cameraPermission === 'authorized') {
-				handleAuth(true);
-			} else if (cameraPermission === 'not-determined') {
-				cameraPermission = await Camera.requestCameraPermission();
-				handleAuth(cameraPermission === 'authorized');
-			} else if (['restricted', 'denied'].includes(cameraPermission)) {
-				handleAuth(false);
-				Alert.alert(
-					'Missing permissions',
-					'We need you to give us access to your camera in order to save the expense document',
-					[
-						{
-							text: 'Ok',
-							onPress: () => Linking.openSettings(),
-							style: 'default',
-						},
-						{ text: 'No', style: 'destructive' },
-					],
-				);
-			}
-		};
 		initialLoad();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const handleCapture = async () => {
@@ -75,6 +75,11 @@ const ExpenseCamera = ({ snapshot, setSnapshot }: Props) => {
 				title="Please authorize camera usage, and re-open the app"
 				status="info"
 			/>
+			{alertIsVisible && (
+				<Button onPress={initialLoad} mt="3" colorScheme="info">
+					I've authorized camera usage
+				</Button>
+			)}
 			{device && isAuthorized ? (
 				<>
 					<View style={s.mediaContainer}>
