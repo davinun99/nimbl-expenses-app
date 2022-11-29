@@ -12,10 +12,11 @@ import {
 import ExpenseCamera from './ExpenseCamera';
 import { PhotoFile } from 'react-native-vision-camera';
 import { ExpendCategoryContext } from '../context/ExpenseCategoryContext';
-import { NewExpense } from '../helpers/types';
+import { NewExpense, NewExpenseWithFile } from '../helpers/types';
 import { ExpenseContext } from '../context/ExpenseContext';
 import { Alert } from 'react-native';
 import InlineDatePicker from './InlineDatePicker';
+import { getFile } from '../helpers';
 
 type expensePropertyName =
 	| 'expense_description'
@@ -60,41 +61,22 @@ const CreateExpenseWithCamera = () => {
 		}
 		return errors.length === 0;
 	};
-	const getFile = () => {
-		if (snapshot) {
-			const lastBarPos = snapshot.path.lastIndexOf('/');
-			const name = snapshot.path.substring(lastBarPos + 1);
-			let type = name.substring(name.lastIndexOf('.') + 1);
-			if (type === 'jpg') {
-				type = 'jpeg';
-			}
-			return {
-				uri: `file://${snapshot.path}`,
-				name,
-				type: `image/${type}`,
-			};
-		} else {
-			return {
-				uri: '',
-				name: '',
-				type: '',
-			};
-		}
-	};
 	const handleSave = async () => {
 		if (!validate() || !snapshot) {
 			return;
 		}
-		const formData = new FormData();
-		const file = getFile();
-		formData.append('expense_description', expense.expense_description);
-		formData.append('expense_category_id', expense.expense_category_id);
-		formData.append('expense_date', expDate.toISOString().substring(0, 10));
-		formData.append('amount', expense.amount);
-		formData.append('expense_currency', expense.expense_currency);
-		formData.append('files', file);
-		formData.append('expense_pay_method_id', expense.expense_pay_method_id);
-		const isCompleted = await createExpense(formData);
+		let file = await getFile(snapshot.path);
+		const newExpense: NewExpenseWithFile = {
+			...expense,
+			file,
+		};
+		if (!expense.expense_pay_method_id) {
+			newExpense.expense_pay_method_id = null;
+		}
+		if (!expense.amount) {
+			newExpense.amount = null;
+		}
+		const isCompleted = await createExpense(newExpense);
 		if (isCompleted) {
 			Alert.alert('Succesfully created expense!');
 		}

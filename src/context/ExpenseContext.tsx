@@ -1,13 +1,13 @@
 import React, { createContext, useState } from 'react';
 import axiosClient from '../helpers/Axios';
-import { Expense, ProviderProps } from '../helpers/types';
+import { Expense, NewExpenseWithFile, ProviderProps } from '../helpers/types';
 import { AxiosError } from 'axios';
 
 interface ExpenseContextInterface {
 	expenses: Expense[];
 	expensesAreLoading: boolean;
 	expenseErrorMessage: string;
-	createExpense: (x: FormData) => Promise<boolean>;
+	createExpense: (exp: NewExpenseWithFile) => Promise<boolean>;
 	getExpenses: () => Promise<boolean>;
 }
 
@@ -33,12 +33,11 @@ const ExpenseProvider = (props: ProviderProps) => {
 		setExpensesAreLoading(false);
 		return isCompleted;
 	};
-	const createExpense = async (formData: FormData) => {
+	const createExpense = async (expense: NewExpenseWithFile) => {
 		setExpensesAreLoading(true);
 		let isCompleted = false;
-		const options = { headers: { 'Content-Type': 'multipart/form-data' } };
 		try {
-			await axiosClient.post('/expense/withFile', formData, options);
+			await axiosClient.post('expense', expense);
 			isCompleted = true;
 		} catch (error) {
 			const err = error as AxiosError;
