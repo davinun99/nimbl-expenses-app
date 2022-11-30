@@ -17,6 +17,7 @@ import { ExpenseContext } from '../context/ExpenseContext';
 import { Alert } from 'react-native';
 import InlineDatePicker from './InlineDatePicker';
 import { getFile } from '../helpers';
+import AlertComponent from './AlertComponent';
 
 type expensePropertyName =
 	| 'expense_description'
@@ -32,8 +33,10 @@ const CreateExpenseWithCamera = () => {
 		null,
 	);
 	const [expDate, setExpDate] = useState(new Date());
+	const [showError, setShowError] = useState(false);
 	const { categories } = useContext(ExpendCategoryContext);
-	const { expensesAreLoading, createExpense } = useContext(ExpenseContext);
+	const { expensesAreLoading, createExpense, expenseErrorMessage } =
+		useContext(ExpenseContext);
 	const handleChange = (name: expensePropertyName, value: string) => {
 		setExpense({ ...expense, [name]: value });
 	};
@@ -86,6 +89,12 @@ const CreateExpenseWithCamera = () => {
 			<Heading fontSize="2xl" py="4">
 				Create Expense
 			</Heading>
+			<AlertComponent
+				show={showError}
+				setShow={setShowError}
+				title={`Error creating expense: ${expenseErrorMessage}`}
+				status="error"
+			/>
 			<ExpenseCamera snapshot={snapshot} setSnapshot={setSnapshot} />
 			<VStack mb={10}>
 				<FormControl isRequired>
