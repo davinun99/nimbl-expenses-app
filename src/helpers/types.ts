@@ -50,7 +50,7 @@ export type NewExpense = {
 	expense_currency: string;
 	expense_date: string;
 	expense_description: string;
-	expense_pay_method_id: string;
+	expense_pay_method_id: string | null;
 };
 export type Expense = {
 	amount: number;
@@ -64,4 +64,13 @@ export type Expense = {
 	expense_id: number;
 	expense_pay_method_id: number;
 	expense_payment_method: ExpensePayMethod | undefined;
+};
+export type BackendFile = {
+	type: 'file';
+	filename: string;
+	contentType: string;
+	content: any;
+};
+export type NewExpenseWithFile = NewExpense & {
+	file: BackendFile;
 };

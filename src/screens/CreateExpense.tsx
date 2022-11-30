@@ -11,7 +11,6 @@ import {
 	VStack,
 } from 'native-base';
 import React, { useContext, useEffect, useState } from 'react';
-import { ActivityIndicator } from 'react-native';
 import { Asset } from 'react-native-image-picker';
 import AlertComponent from '../components/AlertComponent';
 import ImagePicker from '../components/ImagePicker';
@@ -19,7 +18,8 @@ import InlineDatePicker from '../components/InlineDatePicker';
 import { ExpendCategoryContext } from '../context/ExpenseCategoryContext';
 import { ExpenseContext } from '../context/ExpenseContext';
 import { PayMethodContext } from '../context/PaymentMethodContext';
-import { NewExpense } from '../helpers/types';
+import { getFile } from '../helpers';
+import { NewExpense, NewExpenseWithFile } from '../helpers/types';
 import { AppStackParamList } from '../navigator/AppNavigator';
 
 type propertyName =
@@ -85,24 +85,21 @@ const CreateExpense = ({ navigation }: CreateExpenseProps) => {
 		return errors.length === 0;
 	};
 	const handleSave = async () => {
-		if (!validate() || !assetFile) {
+		if (!validate() || !assetFile?.uri) {
 			return;
 		}
-		const formData = new FormData();
-		const file = {
-			uri: assetFile.uri,
-			name: assetFile.fileName,
-			type: assetFile.type,
-			contentType: assetFile.type,
+		let file = await getFile(assetFile.uri);
+		const newExpense: NewExpenseWithFile = {
+			...expense,
+			file,
 		};
-		formData.append('expense_description', expense.expense_description);
-		formData.append('expense_category_id', expense.expense_category_id);
-		formData.append('expense_date', expDate.toISOString().substring(0, 10));
-		formData.append('amount', expense.amount);
-		formData.append('expense_currency', expense.expense_currency);
-		formData.append('files', file);
-		formData.append('expense_pay_method_id', expense.expense_pay_method_id);
-		const isCompleted = await createExpense(formData);
+		if (!expense.expense_pay_method_id) {
+			newExpense.expense_pay_method_id = null;
+		}
+		if (!expense.amount) {
+			newExpense.amount = null;
+		}
+		const isCompleted = await createExpense(newExpense);
 		if (isCompleted) {
 			navigation.navigate('HomeScreen');
 			getExpenses();
@@ -110,7 +107,7 @@ const CreateExpense = ({ navigation }: CreateExpenseProps) => {
 			onOpen();
 		}
 	};
-
+	const isValid = validate();
 	return (
 		<Box px="5" bgColor="white">
 			<Heading fontSize="xl" py="4">
@@ -247,12 +244,11 @@ const CreateExpense = ({ navigation }: CreateExpenseProps) => {
 					</FormControl.Label>
 					<ImagePicker file={assetFile} setFile={setAssetFile} />
 				</FormControl>
-				<Button onPress={handleSave}>
-					{expensesAreLoading ? (
-						<ActivityIndicator color="white" />
-					) : (
-						'Save expense'
-					)}
+				<Button
+					onPress={handleSave}
+					isDisabled={isValid}
+					isLoading={expensesAreLoading}>
+					Save expense
 				</Button>
 			</VStack>
 		</Box>

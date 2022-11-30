@@ -5,13 +5,12 @@ import LoginScreen from '../screens/Login';
 import CreateExpenseScreen from '../screens/CreateExpense';
 import LogoutScreen from '../screens/Logout';
 import ExpenseDetailScreen from '../components/ExpenseDetail';
-import HomeScreen from '../screens/Home';
+import NavMenu from '../components/NavMenu';
+import CreateExpenseNavigator from './CreateExpenseNavigator';
 
 export type AppStackParamList = {
 	HomeScreen: undefined;
 	ExpensesScreen: undefined;
-	// Profile: { userId: string };
-	// Feed: { sort: 'latest' | 'top' } | undefined;
 	CreateExpenseScreen: undefined;
 	LoginScreen: undefined;
 	LogoutScreen: undefined;
@@ -20,7 +19,14 @@ export type AppStackParamList = {
 const AppStack = createNativeStackNavigator<AppStackParamList>();
 
 const AppNavigator = () => (
-	<AppStack.Navigator initialRouteName="LoginScreen">
+	<AppStack.Navigator
+		initialRouteName="LoginScreen"
+		screenOptions={({ navigation }) => ({
+			headerRight: props => (
+				<NavMenu {...props} navigation={navigation} />
+			),
+			headerBackVisible: true,
+		})}>
 		<AppStack.Screen
 			name="LoginScreen"
 			component={LoginScreen}
@@ -30,9 +36,10 @@ const AppNavigator = () => (
 		/>
 		<AppStack.Screen
 			name="HomeScreen"
-			component={HomeScreen}
+			component={CreateExpenseNavigator}
 			options={{
 				title: 'Home',
+				headerShown: false,
 			}}
 		/>
 		<AppStack.Screen
