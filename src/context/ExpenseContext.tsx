@@ -50,7 +50,13 @@ const ExpenseProvider = (props: ProviderProps) => {
 		setExpenseErrorMessage('');
 		try {
 			const expenseRes = await axiosClient.get('/expenses');
-			setExpenses(Array.isArray(expenseRes.data) ? expenseRes.data : []);
+			const expensesFromBack: Expense[] = Array.isArray(expenseRes.data)
+				? expenseRes.data
+				: [];
+			const sortedExpenses = expensesFromBack.sort(
+				(e1, e2) => e2.expense_id - e1.expense_id,
+			);
+			setExpenses(sortedExpenses);
 			isCompleted = true;
 		} catch (error) {
 			const err = error as AxiosError;
