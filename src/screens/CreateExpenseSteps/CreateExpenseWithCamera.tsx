@@ -1,14 +1,5 @@
 import React, { useContext, useState } from 'react';
-import {
-	Heading,
-	Box,
-	VStack,
-	FormControl,
-	Input,
-	Select,
-	Button,
-	Spinner,
-} from 'native-base';
+import { Box, VStack, FormControl, Input, Select, Button } from 'native-base';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import ExpensePhotoPreview from '../../components/ExpensePhotoFilePreview';
 import { ExpendCategoryContext } from '../../context/ExpenseCategoryContext';
@@ -41,32 +32,19 @@ const CreateExpenseWithCamera = ({ navigation }: Props) => {
 		newExpense,
 		expensesAreLoading,
 		expenseErrorMessage,
-		expenseSnapshot,
+		getExpenses,
 		setNewExpense,
 		createExpense,
 		setExpenseSnapshot,
+		validateExpense,
+		cleanExpense,
 	} = useContext(ExpenseContext);
 	const handleChange = (name: expensePropertyName, value: string) => {
 		setNewExpense({ ...newExpense, [name]: value });
 	};
-	const validate = () => {
-		const errors = [];
-		if (newExpense.expense_description.trim() === '') {
-			errors.push('You should provide a description');
-		}
-		if (newExpense.expense_currency.trim() === '') {
-			errors.push('You should select a currency');
-		}
-		if (newExpense.expense_category_id.trim() === '') {
-			errors.push('You should select a category');
-		}
-		if (!newExpense) {
-			errors.push('You should select a file');
-		}
-		return errors.length === 0;
-	};
+
 	const handleSave = async () => {
-		if (!validate() || !expenseSnapshot) {
+		if (!validateExpense()) {
 			return;
 		}
 		if (!newExpense.expense_pay_method_id) {
@@ -77,24 +55,27 @@ const CreateExpenseWithCamera = ({ navigation }: Props) => {
 		}
 		const isCompleted = await createExpense(newExpense);
 		if (isCompleted) {
+			getExpenses();
 			Alert.alert('Succesfully created expense!');
+			navigation.reset({
+				index: 0,
+				routes: [{ name: 'ExpensesScreen' }],
+			});
+			cleanExpense();
 		}
 	};
 	const handleClosePhoto = () => {
 		navigation.navigate('FullScreenCamera');
 		setExpenseSnapshot(null);
 	};
-
+	const isValid = validateExpense();
 	return (
 		<KeyboardAwareScrollView
 			enableOnAndroid
 			enableAutomaticScroll
 			keyboardOpeningTime={0}
 			extraHeight={Platform.select({ android: 200 })}>
-			<Box px="5" w="100%" h="100%" bgColor="white">
-				<Heading fontSize="2xl" py="4">
-					Create Expense
-				</Heading>
+			<Box px="5" w="100%" h="100%" bgColor="white" mt={5}>
 				<AlertComponent
 					show={showError}
 					setShow={setShowError}
@@ -157,12 +138,11 @@ const CreateExpenseWithCamera = ({ navigation }: Props) => {
 							placeholder={expDate.toISOString().substring(0, 10)}
 						/>
 					</FormControl>
-					<Button onPress={handleSave}>
-						{expensesAreLoading ? (
-							<Spinner color="white" />
-						) : (
-							'Save expense'
-						)}
+					<Button
+						onPress={handleSave}
+						isLoading={expensesAreLoading}
+						isDisabled={!isValid}>
+						Save expense
 					</Button>
 				</VStack>
 			</Box>
