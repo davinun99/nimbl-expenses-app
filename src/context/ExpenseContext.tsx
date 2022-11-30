@@ -20,10 +20,20 @@ interface ExpenseContextInterface {
 	getExpenses: () => Promise<boolean>;
 	setNewExpense: (e: NewExpenseWithFile) => void;
 	setExpenseSnapshot: (f: PhotoFile | null) => void;
+	validateExpense: () => boolean;
+	cleanExpense: () => void;
 }
 
 export const ExpenseContext = createContext({} as ExpenseContextInterface);
-
+const CLEAN_EXPENSE: NewExpenseWithFile = {
+	expense_description: '',
+	amount: 0,
+	expense_currency: 'EUR',
+	expense_category_id: '',
+	expense_date: new Date().toISOString().substring(0, 10),
+	expense_pay_method_id: null,
+	file: {} as BackendFile,
+};
 const ExpenseProvider = (props: ProviderProps) => {
 	const [expenses, setExpenses] = useState<Expense[]>([]);
 	const [expensesAreLoading, setExpensesAreLoading] = useState(false);
@@ -31,15 +41,8 @@ const ExpenseProvider = (props: ProviderProps) => {
 	const [expenseSnapshot, setExpenseSnapshot] = useState<PhotoFile | null>(
 		null,
 	);
-	const [newExpense, setNewExpense] = useState<NewExpenseWithFile>({
-		expense_description: '',
-		amount: 0,
-		expense_currency: 'EUR',
-		expense_category_id: '',
-		expense_date: new Date().toISOString().substring(0, 10),
-		expense_pay_method_id: null,
-		file: {} as BackendFile,
-	});
+	const [newExpense, setNewExpense] =
+		useState<NewExpenseWithFile>(CLEAN_EXPENSE);
 	const getExpenses = async () => {
 		let isCompleted = false;
 		setExpensesAreLoading(true);
@@ -69,6 +72,22 @@ const ExpenseProvider = (props: ProviderProps) => {
 		setExpensesAreLoading(false);
 		return isCompleted;
 	};
+	const validateExpense = () => {
+		const errors = [];
+		if (newExpense.expense_description.trim() === '') {
+			errors.push('You should provide a description');
+		}
+		if (newExpense.expense_currency.trim() === '') {
+			errors.push('You should select a currency');
+		}
+		if (newExpense.expense_category_id.trim() === '') {
+			errors.push('You should select a category');
+		}
+		if (!newExpense.file || !newExpense.file.content) {
+			errors.push('You should select a file');
+		}
+		return errors.length === 0;
+	};
 	const setExpenseSnapshotAndFile = (photoFile: PhotoFile | null) => {
 		setExpenseSnapshot(photoFile);
 		if (photoFile) {
@@ -78,6 +97,10 @@ const ExpenseProvider = (props: ProviderProps) => {
 		} else {
 			setNewExpense({ ...newExpense, file: {} as BackendFile });
 		}
+	};
+	const cleanExpense = () => {
+		setNewExpense(CLEAN_EXPENSE);
+		setExpenseSnapshot(null);
 	};
 
 	return (
@@ -92,6 +115,8 @@ const ExpenseProvider = (props: ProviderProps) => {
 				createExpense,
 				setNewExpense,
 				setExpenseSnapshot: setExpenseSnapshotAndFile,
+				validateExpense,
+				cleanExpense,
 			}}>
 			{props.children}
 		</ExpenseContext.Provider>
