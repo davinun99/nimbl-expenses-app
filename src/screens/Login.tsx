@@ -30,7 +30,7 @@ const Login = (props: Props) => {
 					_dark={{
 						color: 'warmGray.50',
 					}}>
-					Welcome
+					Welcome!
 				</Heading>
 				<Heading
 					mt="1"

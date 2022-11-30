@@ -9,16 +9,15 @@ import {
 	Button,
 	Spinner,
 } from 'native-base';
-import ExpenseCamera from './ExpenseCamera';
-import { PhotoFile } from 'react-native-vision-camera';
-import { ExpendCategoryContext } from '../context/ExpenseCategoryContext';
-import { NewExpense, NewExpenseWithFile } from '../helpers/types';
-import { ExpenseContext } from '../context/ExpenseContext';
-import { Alert, Platform } from 'react-native';
-import InlineDatePicker from './InlineDatePicker';
-import { getFile } from '../helpers';
-import AlertComponent from './AlertComponent';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import ExpensePhotoPreview from '../../components/ExpensePhotoFilePreview';
+import { ExpendCategoryContext } from '../../context/ExpenseCategoryContext';
+import { ExpenseContext } from '../../context/ExpenseContext';
+import { Alert, Platform } from 'react-native';
+import InlineDatePicker from '../../components/InlineDatePicker';
+import AlertComponent from '../../components/AlertComponent';
+import { CreateExpenseStackParamList } from '../../navigator/CreateExpenseNavigator';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 type expensePropertyName =
 	| 'expense_description'
@@ -29,55 +28,51 @@ type expensePropertyName =
 	| 'assetFile'
 	| 'expense_pay_method_id';
 
-const CreateExpenseWithCamera = () => {
-	const [snapshot, setSnapshot] = useState<PhotoFile | null | undefined>(
-		null,
-	);
+type Props = NativeStackScreenProps<
+	CreateExpenseStackParamList,
+	'CreateExpenseWithCamera'
+>;
+
+const CreateExpenseWithCamera = ({ navigation }: Props) => {
 	const [expDate, setExpDate] = useState(new Date());
 	const [showError, setShowError] = useState(false);
 	const { categories } = useContext(ExpendCategoryContext);
-	const { expensesAreLoading, createExpense, expenseErrorMessage } =
-		useContext(ExpenseContext);
+	const {
+		newExpense,
+		expensesAreLoading,
+		expenseErrorMessage,
+		expenseSnapshot,
+		setNewExpense,
+		createExpense,
+		setExpenseSnapshot,
+	} = useContext(ExpenseContext);
 	const handleChange = (name: expensePropertyName, value: string) => {
-		setExpense({ ...expense, [name]: value });
+		setNewExpense({ ...newExpense, [name]: value });
 	};
-	const [expense, setExpense] = useState<NewExpense>({
-		expense_description: '',
-		amount: 0,
-		expense_currency: 'EUR',
-		expense_category_id: '',
-		expense_date: new Date().toISOString().substring(0, 10),
-		expense_pay_method_id: '',
-	});
 	const validate = () => {
 		const errors = [];
-		if (expense.expense_description.trim() === '') {
+		if (newExpense.expense_description.trim() === '') {
 			errors.push('You should provide a description');
 		}
-		if (expense.expense_currency.trim() === '') {
+		if (newExpense.expense_currency.trim() === '') {
 			errors.push('You should select a currency');
 		}
-		if (expense.expense_category_id.trim() === '') {
+		if (newExpense.expense_category_id.trim() === '') {
 			errors.push('You should select a category');
 		}
-		if (!snapshot) {
+		if (!newExpense) {
 			errors.push('You should select a file');
 		}
 		return errors.length === 0;
 	};
 	const handleSave = async () => {
-		if (!validate() || !snapshot) {
+		if (!validate() || !expenseSnapshot) {
 			return;
 		}
-		let file = await getFile(snapshot.path);
-		const newExpense: NewExpenseWithFile = {
-			...expense,
-			file,
-		};
-		if (!expense.expense_pay_method_id) {
+		if (!newExpense.expense_pay_method_id) {
 			newExpense.expense_pay_method_id = null;
 		}
-		if (!expense.amount) {
+		if (!newExpense.amount) {
 			newExpense.amount = null;
 		}
 		const isCompleted = await createExpense(newExpense);
@@ -85,6 +80,11 @@ const CreateExpenseWithCamera = () => {
 			Alert.alert('Succesfully created expense!');
 		}
 	};
+	const handleClosePhoto = () => {
+		navigation.navigate('FullScreenCamera');
+		setExpenseSnapshot(null);
+	};
+
 	return (
 		<KeyboardAwareScrollView
 			enableOnAndroid
@@ -101,7 +101,7 @@ const CreateExpenseWithCamera = () => {
 					title={`Error creating expense: ${expenseErrorMessage}`}
 					status="error"
 				/>
-				<ExpenseCamera snapshot={snapshot} setSnapshot={setSnapshot} />
+				<ExpensePhotoPreview handleClosePhoto={handleClosePhoto} />
 				<VStack mb={10}>
 					<FormControl isRequired>
 						<FormControl.Label
@@ -127,7 +127,7 @@ const CreateExpenseWithCamera = () => {
 							Category
 						</FormControl.Label>
 						<Select
-							selectedValue={`${expense.expense_category_id}`}
+							selectedValue={`${newExpense.expense_category_id}`}
 							size="md"
 							bgColor="white"
 							placeholder="Select a category"
