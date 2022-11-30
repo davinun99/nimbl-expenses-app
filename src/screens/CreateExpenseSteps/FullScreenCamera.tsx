@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Box, Button, Center, Icon } from 'native-base';
 import { Camera, useCameraDevices } from 'react-native-vision-camera';
-import { StyleSheet, Linking, View, Alert } from 'react-native';
+import { StyleSheet, Linking, Alert } from 'react-native';
 import * as Feather from 'react-native-feather';
 import AlertComponent from '../../components/AlertComponent';
 import { ExpenseContext } from '../../context/ExpenseContext';
@@ -67,8 +67,12 @@ const FullScreenCamera = ({ navigation }: Props) => {
 			Alert.alert('Error capturing the photo, please try again');
 		}
 	};
+	const goToList = () => {
+		navigation.navigate('ExpensesScreen');
+	};
+
 	return (
-		<Box style={s.mainContainer}>
+		<Box>
 			<Center position="absolute" top={5} p={5} w="100%">
 				<AlertComponent
 					show={alertIsVisible}
@@ -84,7 +88,7 @@ const FullScreenCamera = ({ navigation }: Props) => {
 			</Center>
 			{device && isAuthorized ? (
 				<>
-					<View style={s.camElementsContainer}>
+					<Box position="relative">
 						<Box w="100%" h="100%">
 							<Camera
 								style={StyleSheet.absoluteFill}
@@ -94,10 +98,18 @@ const FullScreenCamera = ({ navigation }: Props) => {
 								ref={cameraRef}
 							/>
 						</Box>
-						<Center style={s.captureContainer}>
+						<Box
+							position="absolute"
+							bottom={100}
+							left={0}
+							display="flex"
+							flexDir="row"
+							width="100%"
+							justifyContent="center">
 							<Button
 								rounded="full"
 								padding={4}
+								mr={2}
 								onPress={handleCapture}>
 								<Icon
 									color="white"
@@ -109,26 +121,21 @@ const FullScreenCamera = ({ navigation }: Props) => {
 									}
 								/>
 							</Button>
-						</Center>
-					</View>
+							<Button
+								rounded="full"
+								padding={4}
+								onPress={goToList}>
+								<Icon
+									color="white"
+									as={<Feather.List width={40} height={40} />}
+								/>
+							</Button>
+						</Box>
+					</Box>
 				</>
 			) : null}
 		</Box>
 	);
 };
 
-const s = StyleSheet.create({
-	mainContainer: {
-		position: 'relative',
-	},
-	camElementsContainer: {
-		position: 'relative',
-	},
-	captureContainer: {
-		position: 'absolute',
-		bottom: 100,
-		left: 0,
-		width: '100%',
-	},
-});
 export default FullScreenCamera;
