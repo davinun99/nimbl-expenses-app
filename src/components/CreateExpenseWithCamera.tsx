@@ -14,10 +14,11 @@ import { PhotoFile } from 'react-native-vision-camera';
 import { ExpendCategoryContext } from '../context/ExpenseCategoryContext';
 import { NewExpense, NewExpenseWithFile } from '../helpers/types';
 import { ExpenseContext } from '../context/ExpenseContext';
-import { Alert } from 'react-native';
+import { Alert, Platform } from 'react-native';
 import InlineDatePicker from './InlineDatePicker';
 import { getFile } from '../helpers';
 import AlertComponent from './AlertComponent';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 type expensePropertyName =
 	| 'expense_description'
@@ -85,81 +86,87 @@ const CreateExpenseWithCamera = () => {
 		}
 	};
 	return (
-		<Box px="5" w="100%" h="100%" bgColor="white">
-			<Heading fontSize="2xl" py="4">
-				Create Expense
-			</Heading>
-			<AlertComponent
-				show={showError}
-				setShow={setShowError}
-				title={`Error creating expense: ${expenseErrorMessage}`}
-				status="error"
-			/>
-			<ExpenseCamera snapshot={snapshot} setSnapshot={setSnapshot} />
-			<VStack mb={10}>
-				<FormControl isRequired>
-					<FormControl.Label
-						_text={{
-							fontSize: '16',
-						}}>
-						Expense description
-					</FormControl.Label>
-					<Input
-						placeholder="Travel to Malaga"
-						onChangeText={value =>
-							handleChange('expense_description', value)
-						}
-						bgColor="white"
-						size="md"
-					/>
-				</FormControl>
-				<FormControl mt={3} isRequired>
-					<FormControl.Label
-						_text={{
-							fontSize: '16',
-						}}>
-						Category
-					</FormControl.Label>
-					<Select
-						selectedValue={`${expense.expense_category_id}`}
-						size="md"
-						bgColor="white"
-						placeholder="Select a category"
-						onValueChange={itemValue =>
-							handleChange('expense_category_id', itemValue)
-						}>
-						{categories.map(cat => (
-							<Select.Item
-								key={`expense-category-${cat.expense_category_id}`}
-								label={cat.expense_category_description}
-								value={`${cat.expense_category_id}`}
-							/>
-						))}
-					</Select>
-				</FormControl>
-				{/* Date picker */}
-				<FormControl my={3}>
-					<FormControl.Label
-						_text={{
-							fontSize: '16',
-						}}>
-						Date
-					</FormControl.Label>
-					<InlineDatePicker
-						value={expDate}
-						setValue={setExpDate}
-						placeholder={expDate.toISOString().substring(0, 10)}
-					/>
-				</FormControl>
-				<Button onPress={handleSave}>
-					{expensesAreLoading ? (
-						<Spinner color="white" />
-					) : (
-						'Save expense'
-					)}
-				</Button>
-			</VStack>
-		</Box>
+		<KeyboardAwareScrollView
+			enableOnAndroid
+			enableAutomaticScroll
+			keyboardOpeningTime={0}
+			extraHeight={Platform.select({ android: 200 })}>
+			<Box px="5" w="100%" h="100%" bgColor="white">
+				<Heading fontSize="2xl" py="4">
+					Create Expense
+				</Heading>
+				<AlertComponent
+					show={showError}
+					setShow={setShowError}
+					title={`Error creating expense: ${expenseErrorMessage}`}
+					status="error"
+				/>
+				<ExpenseCamera snapshot={snapshot} setSnapshot={setSnapshot} />
+				<VStack mb={10}>
+					<FormControl isRequired>
+						<FormControl.Label
+							_text={{
+								fontSize: '16',
+							}}>
+							Expense description
+						</FormControl.Label>
+						<Input
+							placeholder="Travel to Malaga"
+							onChangeText={value =>
+								handleChange('expense_description', value)
+							}
+							bgColor="white"
+							size="md"
+						/>
+					</FormControl>
+					<FormControl mt={3} isRequired>
+						<FormControl.Label
+							_text={{
+								fontSize: '16',
+							}}>
+							Category
+						</FormControl.Label>
+						<Select
+							selectedValue={`${expense.expense_category_id}`}
+							size="md"
+							bgColor="white"
+							placeholder="Select a category"
+							onValueChange={itemValue =>
+								handleChange('expense_category_id', itemValue)
+							}>
+							{categories.map(cat => (
+								<Select.Item
+									key={`expense-category-${cat.expense_category_id}`}
+									label={cat.expense_category_description}
+									value={`${cat.expense_category_id}`}
+								/>
+							))}
+						</Select>
+					</FormControl>
+					{/* Date picker */}
+					<FormControl my={3}>
+						<FormControl.Label
+							_text={{
+								fontSize: '16',
+							}}>
+							Date
+						</FormControl.Label>
+						<InlineDatePicker
+							value={expDate}
+							setValue={setExpDate}
+							placeholder={expDate.toISOString().substring(0, 10)}
+						/>
+					</FormControl>
+					<Button onPress={handleSave}>
+						{expensesAreLoading ? (
+							<Spinner color="white" />
+						) : (
+							'Save expense'
+						)}
+					</Button>
+				</VStack>
+			</Box>
+		</KeyboardAwareScrollView>
 	);
 };
 
