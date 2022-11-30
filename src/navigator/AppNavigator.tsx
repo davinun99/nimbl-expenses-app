@@ -1,27 +1,67 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import HomeScreen from '../screens/Home';
+import ExpensesScreen from '../screens/Expenses';
 import LoginScreen from '../screens/Login';
 import CreateExpenseScreen from '../screens/CreateExpense';
 import LogoutScreen from '../screens/Logout';
+import ExpenseDetailScreen from '../components/ExpenseDetail';
+import NavMenu from '../components/NavMenu';
+import CreateExpenseNavigator from './CreateExpenseNavigator';
 
 export type AppStackParamList = {
 	HomeScreen: undefined;
-	// Profile: { userId: string };
-	// Feed: { sort: 'latest' | 'top' } | undefined;
+	ExpensesScreen: undefined;
 	CreateExpenseScreen: undefined;
 	LoginScreen: undefined;
 	LogoutScreen: undefined;
+	ExpenseDetailScreen: { expenseId: null | number };
 };
 const AppStack = createNativeStackNavigator<AppStackParamList>();
 
 const AppNavigator = () => (
-	<AppStack.Navigator initialRouteName="LoginScreen">
-		<AppStack.Screen name="LoginScreen" component={LoginScreen} />
-		<AppStack.Screen name="HomeScreen" component={HomeScreen} />
+	<AppStack.Navigator
+		initialRouteName="LoginScreen"
+		screenOptions={({ navigation }) => ({
+			headerRight: props => (
+				<NavMenu {...props} navigation={navigation} />
+			),
+			headerBackVisible: true,
+		})}>
+		<AppStack.Screen
+			name="LoginScreen"
+			component={LoginScreen}
+			options={{
+				title: 'Login',
+			}}
+		/>
+		<AppStack.Screen
+			name="HomeScreen"
+			component={CreateExpenseNavigator}
+			options={{
+				title: 'Home',
+				headerShown: false,
+			}}
+		/>
+		<AppStack.Screen
+			name="ExpensesScreen"
+			component={ExpensesScreen}
+			options={{
+				title: 'Expenses',
+			}}
+		/>
 		<AppStack.Screen
 			name="CreateExpenseScreen"
 			component={CreateExpenseScreen}
+			options={{
+				title: 'Create expense',
+			}}
+		/>
+		<AppStack.Screen
+			name="ExpenseDetailScreen"
+			component={ExpenseDetailScreen}
+			options={{
+				title: 'Expense',
+			}}
 		/>
 		<AppStack.Screen name="LogoutScreen" component={LogoutScreen} />
 	</AppStack.Navigator>
