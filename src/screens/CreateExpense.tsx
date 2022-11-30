@@ -11,7 +11,6 @@ import {
 	VStack,
 } from 'native-base';
 import React, { useContext, useEffect, useState } from 'react';
-import { ActivityIndicator } from 'react-native';
 import { Asset } from 'react-native-image-picker';
 import AlertComponent from '../components/AlertComponent';
 import ImagePicker from '../components/ImagePicker';
@@ -108,7 +107,7 @@ const CreateExpense = ({ navigation }: CreateExpenseProps) => {
 			onOpen();
 		}
 	};
-
+	const isValid = validate();
 	return (
 		<Box px="5" bgColor="white">
 			<Heading fontSize="xl" py="4">
@@ -245,12 +244,11 @@ const CreateExpense = ({ navigation }: CreateExpenseProps) => {
 					</FormControl.Label>
 					<ImagePicker file={assetFile} setFile={setAssetFile} />
 				</FormControl>
-				<Button onPress={handleSave}>
-					{expensesAreLoading ? (
-						<ActivityIndicator color="white" />
-					) : (
-						'Save expense'
-					)}
+				<Button
+					onPress={handleSave}
+					isDisabled={isValid}
+					isLoading={expensesAreLoading}>
+					Save expense
 				</Button>
 			</VStack>
 		</Box>
