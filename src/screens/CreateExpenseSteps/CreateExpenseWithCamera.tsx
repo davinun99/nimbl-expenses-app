@@ -9,6 +9,7 @@ import InlineDatePicker from '../../components/InlineDatePicker';
 import AlertComponent from '../../components/AlertComponent';
 import { CreateExpenseStackParamList } from '../../navigator/CreateExpenseNavigator';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { convertStrToDate } from '../../helpers';
 
 type expensePropertyName =
 	| 'expense_description'
@@ -25,7 +26,6 @@ type Props = NativeStackScreenProps<
 >;
 
 const CreateExpenseWithCamera = ({ navigation }: Props) => {
-	const [expDate, setExpDate] = useState(new Date());
 	const [showError, setShowError] = useState(false);
 	const { categories } = useContext(ExpendCategoryContext);
 	const {
@@ -42,7 +42,9 @@ const CreateExpenseWithCamera = ({ navigation }: Props) => {
 	const handleChange = (name: expensePropertyName, value: string) => {
 		setNewExpense({ ...newExpense, [name]: value });
 	};
-
+	const setExpDate = (date: Date) => {
+		setNewExpense({ ...newExpense, expense_date: date.toISOString() });
+	};
 	const handleSave = async () => {
 		if (!validateExpense()) {
 			return;
@@ -133,9 +135,12 @@ const CreateExpenseWithCamera = ({ navigation }: Props) => {
 							Date
 						</FormControl.Label>
 						<InlineDatePicker
-							value={expDate}
+							value={
+								convertStrToDate(newExpense.expense_date) ||
+								new Date()
+							}
 							setValue={setExpDate}
-							placeholder={expDate.toISOString().substring(0, 10)}
+							placeholder={newExpense.expense_date}
 						/>
 					</FormControl>
 					<Button
