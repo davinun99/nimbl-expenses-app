@@ -18,6 +18,7 @@ import AlertComponent from '../../components/AlertComponent';
 import { CreateExpenseStackParamList } from '../../navigator/CreateExpenseNavigator';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { convertStrToDate } from '../../helpers';
+import { PayMethodContext } from '../../context/PaymentMethodContext';
 
 type expensePropertyName =
 	| 'expense_description'
@@ -36,6 +37,7 @@ type Props = NativeStackScreenProps<
 const CreateExpenseWithCamera = ({ navigation }: Props) => {
 	const [showError, setShowError] = useState(false);
 	const { categories } = useContext(ExpendCategoryContext);
+	const { paymentMethods } = useContext(PayMethodContext);
 	const {
 		newExpense,
 		expensesAreLoading,
@@ -154,7 +156,7 @@ const CreateExpenseWithCamera = ({ navigation }: Props) => {
 						/>
 					</FormControl>
 					{/* Amount and currency */}
-					<HStack my={4}>
+					<HStack mt={3}>
 						<FormControl w="60%" mr="5%">
 							<FormControl.Label
 								_text={{
@@ -191,6 +193,31 @@ const CreateExpenseWithCamera = ({ navigation }: Props) => {
 							</Select>
 						</FormControl>
 					</HStack>
+					{/* Payment Method select */}
+					<FormControl my={4} isRequired>
+						<FormControl.Label
+							_text={{
+								fontSize: '16',
+							}}>
+							Payment Method
+						</FormControl.Label>
+						<Select
+							selectedValue={`${newExpense.expense_pay_method_id}`}
+							size="lg"
+							bgColor="white"
+							placeholder="Select a payment method"
+							onValueChange={itemValue =>
+								handleChange('expense_pay_method_id', itemValue)
+							}>
+							{paymentMethods.map(p => (
+								<Select.Item
+									key={`expense-category-${p.payment_method_id}`}
+									label={p.card_alias}
+									value={`${p.payment_method_id}`}
+								/>
+							))}
+						</Select>
+					</FormControl>
 					<Button
 						onPress={handleSave}
 						isLoading={expensesAreLoading}

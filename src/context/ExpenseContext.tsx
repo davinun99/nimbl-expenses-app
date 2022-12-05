@@ -1,4 +1,4 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import axiosClient from '../helpers/Axios';
 import {
 	BackendFile,
@@ -9,6 +9,7 @@ import {
 import { AxiosError } from 'axios';
 import { PhotoFile } from 'react-native-vision-camera';
 import { getFile } from '../helpers';
+import { PayMethodContext } from './PaymentMethodContext';
 
 interface ExpenseContextInterface {
 	expenses: Expense[];
@@ -43,6 +44,9 @@ const ExpenseProvider = (props: ProviderProps) => {
 	);
 	const [newExpense, setNewExpense] =
 		useState<NewExpenseWithFile>(CLEAN_EXPENSE);
+
+	const { paymentMethods } = useContext(PayMethodContext);
+
 	const getExpenses = async () => {
 		let isCompleted = false;
 		setExpensesAreLoading(true);
@@ -105,7 +109,12 @@ const ExpenseProvider = (props: ProviderProps) => {
 		}
 	};
 	const cleanExpense = () => {
-		setNewExpense(CLEAN_EXPENSE);
+		const defaultPayMethod = paymentMethods.find(p => p.is_default_card);
+		const _cleanExpense = { ...CLEAN_EXPENSE };
+		if (defaultPayMethod) {
+			_cleanExpense.expense_pay_method_id = `${defaultPayMethod.payment_method_id}`;
+		}
+		setNewExpense(_cleanExpense);
 		setExpenseSnapshot(null);
 	};
 
