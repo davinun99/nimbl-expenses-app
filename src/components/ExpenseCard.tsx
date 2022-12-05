@@ -15,8 +15,6 @@ type ExpenseCardProps = {
 	expense: Expense;
 	navigateToDetailScreen: (expenseId: number) => void;
 };
-const EXPENSE_URI =
-	'https://quickbooks.intuit.com/oidam/intuit/sbseg/en_us/Blog/Illustration/5bd3805355baa2fe0a68f98ad0d4e0d8.png';
 
 const ExpenseCard = ({ expense, navigateToDetailScreen }: ExpenseCardProps) => {
 	const goToDetail = () => {
@@ -36,9 +34,7 @@ const ExpenseCard = ({ expense, navigateToDetailScreen }: ExpenseCardProps) => {
 				<HStack space={[2, 3]} justifyContent="space-between">
 					<Avatar
 						size="48px"
-						source={{
-							uri: EXPENSE_URI,
-						}}
+						source={require('../assets/defaultExpense.webp')}
 					/>
 					<VStack>
 						<Text
@@ -47,7 +43,9 @@ const ExpenseCard = ({ expense, navigateToDetailScreen }: ExpenseCardProps) => {
 							}}
 							color="coolGray.800"
 							bold>
-							{expense.expense_description}
+							{expense.expense_description
+								? expense.expense_description
+								: '[No description]'}
 						</Text>
 						<Text
 							color="coolGray.600"
