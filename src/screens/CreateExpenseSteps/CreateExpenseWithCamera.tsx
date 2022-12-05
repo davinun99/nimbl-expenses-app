@@ -1,5 +1,13 @@
 import React, { useContext, useState } from 'react';
-import { Box, VStack, FormControl, Input, Select, Button } from 'native-base';
+import {
+	Box,
+	VStack,
+	FormControl,
+	Input,
+	Select,
+	Button,
+	HStack,
+} from 'native-base';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import ExpensePhotoPreview from '../../components/ExpensePhotoFilePreview';
 import { ExpendCategoryContext } from '../../context/ExpenseCategoryContext';
@@ -86,6 +94,7 @@ const CreateExpenseWithCamera = ({ navigation }: Props) => {
 				/>
 				<ExpensePhotoPreview handleClosePhoto={handleClosePhoto} />
 				<VStack mb={10}>
+					{/* Description */}
 					<FormControl isRequired>
 						<FormControl.Label
 							_text={{
@@ -102,6 +111,7 @@ const CreateExpenseWithCamera = ({ navigation }: Props) => {
 							size="md"
 						/>
 					</FormControl>
+					{/* Category */}
 					<FormControl mt={3} isRequired>
 						<FormControl.Label
 							_text={{
@@ -127,7 +137,7 @@ const CreateExpenseWithCamera = ({ navigation }: Props) => {
 						</Select>
 					</FormControl>
 					{/* Date picker */}
-					<FormControl my={3}>
+					<FormControl mt={3}>
 						<FormControl.Label
 							_text={{
 								fontSize: '16',
@@ -143,6 +153,44 @@ const CreateExpenseWithCamera = ({ navigation }: Props) => {
 							placeholder={newExpense.expense_date}
 						/>
 					</FormControl>
+					{/* Amount and currency */}
+					<HStack my={4}>
+						<FormControl w="60%" mr="5%">
+							<FormControl.Label
+								_text={{
+									fontSize: '16',
+								}}>
+								Expense amount
+							</FormControl.Label>
+							<Input
+								placeholder="100"
+								onChangeText={value =>
+									handleChange('amount', value)
+								}
+								bgColor="white"
+								keyboardType="numeric"
+								size="lg"
+							/>
+						</FormControl>
+						<FormControl w="35%" isRequired>
+							<FormControl.Label
+								_text={{
+									fontSize: '16',
+								}}>
+								Currency
+							</FormControl.Label>
+							<Select
+								onValueChange={value =>
+									handleChange('expense_currency', value)
+								}
+								selectedValue={newExpense.expense_currency}
+								size="lg"
+								bgColor="white">
+								<Select.Item label="EUR" value="EUR" />
+								<Select.Item label="USD" value="USD" />
+							</Select>
+						</FormControl>
+					</HStack>
 					<Button
 						onPress={handleSave}
 						isLoading={expensesAreLoading}
