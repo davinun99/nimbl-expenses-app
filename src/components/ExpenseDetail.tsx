@@ -1,9 +1,7 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Box, Button, Heading, Text } from 'native-base';
-import React, { useContext, useState } from 'react';
-import { ActivityIndicator, Linking } from 'react-native';
+import React, { useContext } from 'react';
 import { ExpenseContext } from '../context/ExpenseContext';
-import axiosClient from '../helpers/Axios';
 import { AppStackParamList } from '../navigator/AppNavigator';
 
 export type ExpenseDetailProps = NativeStackScreenProps<
@@ -11,23 +9,12 @@ export type ExpenseDetailProps = NativeStackScreenProps<
 	'ExpenseDetailScreen'
 >;
 
-const ExpenseDetail = ({ route }: ExpenseDetailProps) => {
-	const expenseId = route.params.expenseId;
+const ExpenseDetail = ({ route, navigation }: ExpenseDetailProps) => {
+	const { expenseId } = route.params;
 	const { expenses } = useContext(ExpenseContext);
 	const expense = expenses.find(e => e.expense_id === expenseId);
-	const [isLoading, setIsLoading] = useState(false);
 	const handleViewExpense = async () => {
-		if (!expense) {
-			return;
-		}
-		try {
-			setIsLoading(true);
-			const documents = await axiosClient.get(
-				`/expensedocuments?expense_document_id=${expense.expense_document_id}`,
-			);
-			Linking.openURL(documents.data[0].temporalUrl);
-		} catch (error) {}
-		setIsLoading(false);
+		navigation.navigate('ExpenseDocumentScreen', { expenseId });
 	};
 
 	return (
@@ -66,7 +53,7 @@ const ExpenseDetail = ({ route }: ExpenseDetailProps) => {
 						colorScheme="secondary"
 						onPress={handleViewExpense}
 						mt={3}>
-						{isLoading ? <ActivityIndicator /> : 'View Invoice'}
+						View Invoice
 					</Button>
 				</>
 			)}
