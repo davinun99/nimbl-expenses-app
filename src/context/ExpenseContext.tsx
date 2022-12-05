@@ -84,9 +84,6 @@ const ExpenseProvider = (props: ProviderProps) => {
 	};
 	const validateExpense = () => {
 		const errors = [];
-		if (newExpense.expense_description.trim() === '') {
-			errors.push('You should provide a description');
-		}
 		if (newExpense.expense_currency.trim() === '') {
 			errors.push('You should select a currency');
 		}

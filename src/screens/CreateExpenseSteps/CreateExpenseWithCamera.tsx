@@ -97,7 +97,7 @@ const CreateExpenseWithCamera = ({ navigation }: Props) => {
 				<ExpensePhotoPreview handleClosePhoto={handleClosePhoto} />
 				<VStack mb={10}>
 					{/* Description */}
-					<FormControl isRequired>
+					<FormControl>
 						<FormControl.Label
 							_text={{
 								fontSize: '16',
