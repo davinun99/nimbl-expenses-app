@@ -77,7 +77,10 @@ const ExpenseProvider = (props: ProviderProps) => {
 			isCompleted = true;
 		} catch (error) {
 			const err = error as AxiosError;
-			setExpenseErrorMessage(err.message);
+			const errorMsg = err.response?.data
+				? `${err.response.data}`
+				: `There was an error creating your expense, please try again later: ${err.message}`;
+			setExpenseErrorMessage(errorMsg);
 		}
 		setExpensesAreLoading(false);
 		return isCompleted;
