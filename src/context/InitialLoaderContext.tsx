@@ -13,10 +13,12 @@ const InitialLoaderContext = React.createContext({} as InitialLoaderInterface);
 
 const InitialLoaderProvider = (props: ProviderProps) => {
 	const [isInitialLoadCompleted, setIsInitialLoadCompleted] = useState(false);
+	const [defaultPayMethodSetted, setDefaultPayMethodSetted] = useState(false);
 	const { isAuthenticated, isAuthLoading } = useContext(AuthContext);
-	const { getExpenses } = useContext(ExpenseContext);
+	const { newExpense, getExpenses, setNewExpense } =
+		useContext(ExpenseContext);
 	const { getCategories } = useContext(ExpendCategoryContext);
-	const { getPaymentMethods } = useContext(PayMethodContext);
+	const { getPaymentMethods, paymentMethods } = useContext(PayMethodContext);
 	const initialLoad = async () => {
 		setIsInitialLoadCompleted(false);
 		await Promise.all([
@@ -32,7 +34,25 @@ const InitialLoaderProvider = (props: ProviderProps) => {
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isAuthenticated, isAuthLoading]);
-
+	useEffect(() => {
+		if (
+			paymentMethods.length &&
+			isAuthenticated &&
+			!defaultPayMethodSetted
+		) {
+			const defaultPayMethod = paymentMethods.find(
+				p => p.is_default_card,
+			);
+			if (defaultPayMethod) {
+				setNewExpense({
+					...newExpense,
+					expense_pay_method_id: `${defaultPayMethod.payment_method_id}`,
+				});
+			}
+			setDefaultPayMethodSetted(true);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [paymentMethods, isAuthenticated, defaultPayMethodSetted]);
 	return (
 		<InitialLoaderContext.Provider
 			value={{

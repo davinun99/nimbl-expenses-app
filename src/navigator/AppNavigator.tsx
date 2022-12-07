@@ -7,6 +7,7 @@ import LogoutScreen from '../screens/Logout';
 import ExpenseDetailScreen from '../components/ExpenseDetail';
 import NavMenu from '../components/NavMenu';
 import CreateExpenseNavigator from './CreateExpenseNavigator';
+import ViewExpenseDocScreen from '../components/ViewExpenseDoc';
 
 export type AppStackParamList = {
 	HomeScreen: undefined;
@@ -15,6 +16,7 @@ export type AppStackParamList = {
 	LoginScreen: undefined;
 	LogoutScreen: undefined;
 	ExpenseDetailScreen: { expenseId: null | number };
+	ExpenseDocumentScreen: { expenseId: null | number };
 };
 const AppStack = createNativeStackNavigator<AppStackParamList>();
 
@@ -61,6 +63,13 @@ const AppNavigator = () => (
 			component={ExpenseDetailScreen}
 			options={{
 				title: 'Expense',
+			}}
+		/>
+		<AppStack.Screen
+			name="ExpenseDocumentScreen"
+			component={ViewExpenseDocScreen}
+			options={{
+				title: 'Document',
 			}}
 		/>
 		<AppStack.Screen name="LogoutScreen" component={LogoutScreen} />
