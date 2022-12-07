@@ -1,5 +1,13 @@
 import React, { useContext, useState } from 'react';
-import { Box, VStack, FormControl, Input, Select, Button } from 'native-base';
+import {
+	Box,
+	VStack,
+	FormControl,
+	Input,
+	Select,
+	Button,
+	HStack,
+} from 'native-base';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import ExpensePhotoPreview from '../../components/ExpensePhotoFilePreview';
 import { ExpendCategoryContext } from '../../context/ExpenseCategoryContext';
@@ -10,6 +18,7 @@ import AlertComponent from '../../components/AlertComponent';
 import { CreateExpenseStackParamList } from '../../navigator/CreateExpenseNavigator';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { convertStrToDate } from '../../helpers';
+import { PayMethodContext } from '../../context/PaymentMethodContext';
 
 type expensePropertyName =
 	| 'expense_description'
@@ -28,6 +37,7 @@ type Props = NativeStackScreenProps<
 const CreateExpenseWithCamera = ({ navigation }: Props) => {
 	const [showError, setShowError] = useState(false);
 	const { categories } = useContext(ExpendCategoryContext);
+	const { paymentMethods } = useContext(PayMethodContext);
 	const {
 		newExpense,
 		expensesAreLoading,
@@ -86,7 +96,8 @@ const CreateExpenseWithCamera = ({ navigation }: Props) => {
 				/>
 				<ExpensePhotoPreview handleClosePhoto={handleClosePhoto} />
 				<VStack mb={10}>
-					<FormControl isRequired>
+					{/* Description */}
+					<FormControl>
 						<FormControl.Label
 							_text={{
 								fontSize: '16',
@@ -102,6 +113,7 @@ const CreateExpenseWithCamera = ({ navigation }: Props) => {
 							size="md"
 						/>
 					</FormControl>
+					{/* Category */}
 					<FormControl mt={3} isRequired>
 						<FormControl.Label
 							_text={{
@@ -127,7 +139,7 @@ const CreateExpenseWithCamera = ({ navigation }: Props) => {
 						</Select>
 					</FormControl>
 					{/* Date picker */}
-					<FormControl my={3}>
+					<FormControl mt={3}>
 						<FormControl.Label
 							_text={{
 								fontSize: '16',
@@ -142,6 +154,69 @@ const CreateExpenseWithCamera = ({ navigation }: Props) => {
 							setValue={setExpDate}
 							placeholder={newExpense.expense_date}
 						/>
+					</FormControl>
+					{/* Amount and currency */}
+					<HStack mt={3}>
+						<FormControl w="60%" mr="5%">
+							<FormControl.Label
+								_text={{
+									fontSize: '16',
+								}}>
+								Expense amount
+							</FormControl.Label>
+							<Input
+								placeholder="100"
+								onChangeText={value =>
+									handleChange('amount', value)
+								}
+								bgColor="white"
+								keyboardType="numeric"
+								size="lg"
+							/>
+						</FormControl>
+						<FormControl w="35%" isRequired>
+							<FormControl.Label
+								_text={{
+									fontSize: '16',
+								}}>
+								Currency
+							</FormControl.Label>
+							<Select
+								onValueChange={value =>
+									handleChange('expense_currency', value)
+								}
+								selectedValue={newExpense.expense_currency}
+								size="lg"
+								bgColor="white">
+								<Select.Item label="EUR" value="EUR" />
+								<Select.Item label="USD" value="USD" />
+							</Select>
+						</FormControl>
+					</HStack>
+					{/* Payment Method select */}
+					<FormControl my={4} isRequired>
+						<FormControl.Label
+							_text={{
+								fontSize: '16',
+							}}>
+							Payment Method
+						</FormControl.Label>
+						<Select
+							selectedValue={`${newExpense.expense_pay_method_id}`}
+							size="lg"
+							bgColor="white"
+							placeholder="Select a payment method"
+							onValueChange={itemValue =>
+								handleChange('expense_pay_method_id', itemValue)
+							}>
+							{paymentMethods.map(p => (
+								<Select.Item
+									key={`expense-category-${p.payment_method_id}`}
+									label={p.card_alias}
+									value={`${p.payment_method_id}`}
+								/>
+							))}
+						</Select>
 					</FormControl>
 					<Button
 						onPress={handleSave}

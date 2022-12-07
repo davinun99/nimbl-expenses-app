@@ -70,9 +70,6 @@ const CreateExpense = ({ navigation }: CreateExpenseProps) => {
 	};
 	const validate = () => {
 		const errors = [];
-		if (expense.expense_description.trim() === '') {
-			errors.push('You should provide a description');
-		}
 		if (expense.expense_currency.trim() === '') {
 			errors.push('You should select a currency');
 		}
