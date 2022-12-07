@@ -20,6 +20,28 @@ const ExpenseCard = ({ expense, navigateToDetailScreen }: ExpenseCardProps) => {
 	const goToDetail = () => {
 		navigateToDetailScreen(expense.expense_id);
 	};
+	let image = null;
+
+	switch (expense.expense_category?.expense_category_description) {
+		case 'Corporate hospitality':
+			image = require('../assets/defaultExpense.webp');
+			break;
+		case 'Travel':
+			image = require('../assets/travelImg.png');
+			break;
+		case 'IT':
+			image = require('../assets/computerImg.jpeg');
+			break;
+		case 'Car':
+			image = require('../assets/carImg.png');
+			break;
+		case 'Property':
+			image = require('../assets/buildingImg.jpeg');
+			break;
+		default:
+			image = require('../assets/defaultExpense.webp');
+			break;
+	}
 	return (
 		<Pressable onPress={goToDetail}>
 			<Box
@@ -32,10 +54,7 @@ const ExpenseCard = ({ expense, navigateToDetailScreen }: ExpenseCardProps) => {
 				pr={['0', '5']}
 				py="2">
 				<HStack space={[2, 3]} justifyContent="space-between">
-					<Avatar
-						size="48px"
-						source={require('../assets/defaultExpense.webp')}
-					/>
+					<Avatar size="48px" source={image} />
 					<VStack>
 						<Text
 							_dark={{
