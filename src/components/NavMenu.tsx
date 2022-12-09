@@ -11,24 +11,33 @@ type Props = HeaderButtonProps & {
 
 const NavMenu = ({ navigation }: Props) => {
 	const navObjs = [
-		{ name: 'Home', onPress: () => navigation?.navigate('HomeScreen') },
+		{
+			name: 'Home',
+			onPress: () => navigation?.navigate('HomeScreen'),
+			needsAuth: true,
+		},
 		{
 			name: 'Expenses',
 			onPress: () => navigation?.navigate('ExpensesScreen'),
+			needsAuth: true,
 		},
 		{
 			name: 'Create expense form',
 			onPress: () => navigation?.navigate('CreateExpenseScreen'),
+			needsAuth: true,
+		},
+		{
+			name: 'Settings',
+			onPress: () => navigation?.navigate('SettingsScreen'),
+			needsAuth: false,
 		},
 		{
 			name: 'Log out',
 			onPress: () => navigation?.navigate('LogoutScreen'),
+			needsAuth: true,
 		},
 	];
 	const { isAuthenticated } = useContext(AuthContext);
-	if (!isAuthenticated) {
-		return null;
-	}
 	return (
 		<Box>
 			<Menu
@@ -47,11 +56,15 @@ const NavMenu = ({ navigation }: Props) => {
 						</Box>
 					</Pressable>
 				)}>
-				{navObjs.map((route, i) => (
-					<Menu.Item key={`menuItem-${i}`} onPress={route.onPress}>
-						{route.name}
-					</Menu.Item>
-				))}
+				{navObjs
+					.filter(({ needsAuth }) => isAuthenticated === needsAuth)
+					.map((route, i) => (
+						<Menu.Item
+							key={`menuItem-${i}`}
+							onPress={route.onPress}>
+							{route.name}
+						</Menu.Item>
+					))}
 			</Menu>
 		</Box>
 	);

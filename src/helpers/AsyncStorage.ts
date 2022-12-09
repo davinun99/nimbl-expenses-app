@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const AUTH_OBJ_KEY = 'AUTH_OBJ';
-
+export const BACKEND_ENV_KEY = 'BACKEND_ENV';
 /**
  * It takes a key and a value, and stores the value in the AsyncStorage under the key
  * @param key - The key to store the data under.
