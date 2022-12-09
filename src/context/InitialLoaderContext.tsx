@@ -1,5 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { ProviderProps } from '../helpers/types';
+import { BACKEND_ENV_KEY, getDataFromStorage } from '../helpers/AsyncStorage';
+import { setAxiosBackendUrl } from '../helpers/Axios';
+import { BackendEnv, ProviderProps } from '../helpers/types';
 import { AuthContext } from './AuthContext';
 import { ExpendCategoryContext } from './ExpenseCategoryContext';
 import { ExpenseContext } from './ExpenseContext';
@@ -21,6 +23,10 @@ const InitialLoaderProvider = (props: ProviderProps) => {
 	const { getPaymentMethods, paymentMethods } = useContext(PayMethodContext);
 	const initialLoad = async () => {
 		setIsInitialLoadCompleted(false);
+		const backendEnv: BackendEnv = await getDataFromStorage(
+			BACKEND_ENV_KEY,
+		);
+		setAxiosBackendUrl(backendEnv);
 		await Promise.all([
 			getExpenses(),
 			getCategories(),
