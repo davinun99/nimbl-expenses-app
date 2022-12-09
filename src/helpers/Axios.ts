@@ -1,21 +1,33 @@
 import axios, { AxiosError } from 'axios';
 import { Alert } from 'react-native';
 import * as RootNavigation from '../navigator/RootNavigator';
+import { BackendEnv } from './types';
 // import * as RootNavigation from '../navigator/RootNavigator';
 
 //PROD
-// const BACKEND_URL = 'https://fkaayuurf1.execute-api.eu-west-2.amazonaws.com/api';
-//DEV
-// const BACKEND_URL = 'https://dev.tarjetaazul.com.py/api';
-const BACKEND_URL =
+export const BACKEND_URL_PROD =
+	'https://fkaayuurf1.execute-api.eu-west-2.amazonaws.com/api';
+export const BACKEND_URL_TEST =
 	'https://ckk9quvsne.execute-api.eu-west-2.amazonaws.com/api';
-// const BACKEND_URL = 'http://localhost:3333/api';
+export const BACKEND_URL_LOCAL = 'http://localhost:3333/api';
 
 const axiosClient = axios.create({
-	baseURL: BACKEND_URL,
+	baseURL: BACKEND_URL_PROD,
 });
 
 const customHeader = 'X-session-ended';
+
+/**
+ * It sets the base URL of the axios client to the backend URL of the environment that is passed in
+ * @param {BackendEnv} backendEnv - This is the environment that you want to set the backend URL to.
+ */
+export const setAxiosBackendUrl = (backendEnv: BackendEnv) => {
+	if (!backendEnv || backendEnv === 'prod') {
+		axiosClient.defaults.baseURL = BACKEND_URL_PROD;
+	} else if (backendEnv === 'test') {
+		axiosClient.defaults.baseURL = BACKEND_URL_TEST;
+	}
+};
 
 /**
  * If the error is a 401, show an alert saying the session has expired. If the error is a 403, show an

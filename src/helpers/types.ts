@@ -74,3 +74,4 @@ export type BackendFile = {
 export type NewExpenseWithFile = NewExpense & {
 	file: BackendFile;
 };
+export type BackendEnv = 'prod' | 'test' | 'local' | null;
