@@ -34,6 +34,7 @@ const CLEAN_EXPENSE: NewExpenseWithFile = {
 	expense_date: new Date().toISOString().substring(0, 10),
 	expense_pay_method_id: null,
 	file: {} as BackendFile,
+	source: 'Phone App',
 };
 const ExpenseProvider = (props: ProviderProps) => {
 	const [expenses, setExpenses] = useState<Expense[]>([]);

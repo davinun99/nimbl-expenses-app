@@ -45,6 +45,7 @@ const CreateExpense = ({ navigation }: CreateExpenseProps) => {
 		expense_category_id: '',
 		expense_date: new Date().toISOString().substring(0, 10),
 		expense_pay_method_id: '',
+		source: 'Phone App',
 	});
 	const [expDate, setExpDate] = useState(new Date());
 	const {
