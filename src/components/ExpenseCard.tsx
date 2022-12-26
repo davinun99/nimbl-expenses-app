@@ -6,8 +6,9 @@ import {
 	Spacer,
 	Text,
 	Pressable,
+	Badge,
 } from 'native-base';
-import React from 'react';
+import React, { memo } from 'react';
 import { strToFormattedDate } from '../helpers';
 import { Expense } from '../helpers/types';
 
@@ -21,7 +22,8 @@ const ExpenseCard = ({ expense, navigateToDetailScreen }: ExpenseCardProps) => {
 		navigateToDetailScreen(expense.expense_id);
 	};
 	let image = null;
-
+	const symbol = expense.expense_currency === 'USD' ? '$' : '€';
+	const formattedAmount = expense.amount ? `${expense.amount} ${symbol}` : '';
 	switch (expense.expense_category?.expense_category_description) {
 		case 'Corporate hospitality':
 			image = require('../assets/defaultExpense.webp');
@@ -76,19 +78,31 @@ const ExpenseCard = ({ expense, navigateToDetailScreen }: ExpenseCardProps) => {
 						</Text>
 					</VStack>
 					<Spacer />
-					<Text
-						fontSize="xs"
-						_dark={{
-							color: 'warmGray.50',
-						}}
-						color="coolGray.800"
-						alignSelf="flex-start">
-						{strToFormattedDate(expense.expense_date)}
-					</Text>
+					<VStack>
+						<Text
+							fontSize="xs"
+							_dark={{
+								color: 'warmGray.50',
+							}}
+							color="coolGray.800"
+							alignSelf="flex-start">
+							{strToFormattedDate(expense.expense_date)}
+						</Text>
+						<Badge colorScheme="success">
+							<Text
+								color="coolGray.600"
+								fontSize="xs"
+								_dark={{
+									color: 'warmGray.200',
+								}}>
+								{formattedAmount}
+							</Text>
+						</Badge>
+					</VStack>
 				</HStack>
 			</Box>
 		</Pressable>
 	);
 };
 
-export default ExpenseCard;
+export default memo(ExpenseCard);
