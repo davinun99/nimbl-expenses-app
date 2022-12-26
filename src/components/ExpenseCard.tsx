@@ -9,7 +9,7 @@ import {
 	Badge,
 } from 'native-base';
 import React, { memo } from 'react';
-import { strToFormattedDate } from '../helpers';
+import { getFormattedAmount, strToFormattedDate } from '../helpers';
 import { Expense } from '../helpers/types';
 
 type ExpenseCardProps = {
@@ -22,8 +22,6 @@ const ExpenseCard = ({ expense, navigateToDetailScreen }: ExpenseCardProps) => {
 		navigateToDetailScreen(expense.expense_id);
 	};
 	let image = null;
-	const symbol = expense.expense_currency === 'USD' ? '$' : '€';
-	const formattedAmount = expense.amount ? `${expense.amount} ${symbol}` : '';
 	switch (expense.expense_category?.expense_category_description) {
 		case 'Corporate hospitality':
 			image = require('../assets/defaultExpense.webp');
@@ -95,7 +93,7 @@ const ExpenseCard = ({ expense, navigateToDetailScreen }: ExpenseCardProps) => {
 								_dark={{
 									color: 'warmGray.200',
 								}}>
-								{formattedAmount}
+								{getFormattedAmount(expense)}
 							</Text>
 						</Badge>
 					</VStack>

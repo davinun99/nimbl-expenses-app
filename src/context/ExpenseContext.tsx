@@ -20,6 +20,10 @@ interface ExpenseContextInterface {
 	newExpense: NewExpenseWithFile;
 	expenseSnapshot: PhotoFile | null;
 	createExpense: (exp: NewExpenseWithFile) => Promise<boolean>;
+	updateExpense: (
+		exp: NewExpenseWithFile,
+		existingExpenseId: number,
+	) => Promise<boolean>;
 	getExpenses: () => Promise<boolean>;
 	setNewExpense: (e: NewExpenseWithFile) => void;
 	setExpenseSnapshot: (f: PhotoFile | null) => void;
@@ -142,6 +146,45 @@ const ExpenseProvider = (props: ProviderProps) => {
 		});
 		return similarExpenses;
 	};
+	const updateExpense = async (
+		updatedExpense: NewExpenseWithFile,
+		existingExpenseId: number,
+	) => {
+		setExpensesAreLoading(true);
+		let isCompleted = false;
+		//Now just update the file? In the future set more fields!
+		const existingExpense = expenses.find(
+			e => e.expense_id === existingExpenseId,
+		);
+		if (!existingExpense) {
+			return false;
+		}
+		const _updatedExpense = {
+			file: updatedExpense.file,
+		};
+		for (const property in updatedExpense) {
+			// @ts-ignore: "Any" type error
+			if (!existingExpense[property] && updatedExpense[property]) {
+				// @ts-ignore: "Any" type error
+				_updatedExpense[property] = updatedExpense[property];
+			}
+		}
+		try {
+			await axiosClient.put(
+				`/expense/${existingExpenseId}`,
+				_updatedExpense,
+			);
+			isCompleted = true;
+		} catch (error) {
+			const err = error as AxiosError;
+			const errorMsg = err.response?.data
+				? `${err.response.data}`
+				: `There was an error creating your expense, please try again later: ${err.message}`;
+			setExpenseErrorMessage(errorMsg);
+		}
+		setExpensesAreLoading(false);
+		return isCompleted;
+	};
 	return (
 		<ExpenseContext.Provider
 			value={{
@@ -150,6 +193,7 @@ const ExpenseProvider = (props: ProviderProps) => {
 				expenseErrorMessage,
 				newExpense,
 				expenseSnapshot,
+				updateExpense,
 				getExpenses,
 				createExpense,
 				setNewExpense,
