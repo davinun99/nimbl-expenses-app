@@ -1,5 +1,5 @@
 import RNFetchBlob from 'rn-fetch-blob';
-import { BackendFile } from './types';
+import { BackendFile, Expense } from './types';
 
 export const monthNamesArray = [
 	'January',
@@ -73,3 +73,14 @@ export const areFloatsEqual: (f1: number, f2: number) => boolean = (
 	float1,
 	float2,
 ) => parseFloat(`${float1}`).toFixed(2) === parseFloat(`${float2}`).toFixed(2);
+
+/**
+ * It takes an expense object and returns a string with the amount and currency symbol
+ * @param {Expense} expense - The expense object.
+ * @returns {string} A string with the amount and currency symbol.
+ */
+export const getFormattedAmount: (expense: Expense) => string = expense => {
+	const symbol = expense.expense_currency === 'USD' ? '$' : '€';
+	const formattedAmount = expense.amount ? `${expense.amount} ${symbol}` : '';
+	return formattedAmount;
+};
