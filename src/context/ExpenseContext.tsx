@@ -8,8 +8,10 @@ import {
 } from '../helpers/types';
 import { AxiosError } from 'axios';
 import { PhotoFile } from 'react-native-vision-camera';
-import { getFile } from '../helpers';
+import { areFloatsEqual, convertStrToDate, getFile } from '../helpers';
 import { PayMethodContext } from './PaymentMethodContext';
+
+const FIND_PERIOD_DAYS = 15;
 
 interface ExpenseContextInterface {
 	expenses: Expense[];
@@ -23,6 +25,7 @@ interface ExpenseContextInterface {
 	setExpenseSnapshot: (f: PhotoFile | null) => void;
 	validateExpense: () => boolean;
 	cleanExpense: () => void;
+	getSimilarExpenses: (expense: NewExpenseWithFile) => Expense[];
 }
 
 export const ExpenseContext = createContext({} as ExpenseContextInterface);
@@ -118,7 +121,27 @@ const ExpenseProvider = (props: ProviderProps) => {
 		setNewExpense(_cleanExpense);
 		setExpenseSnapshot(null);
 	};
-
+	const getSimilarExpenses = (expense: NewExpenseWithFile) => {
+		const dateStart = convertStrToDate(expense.expense_date);
+		if (!dateStart) {
+			return [];
+		}
+		const dateEnd = new Date(dateStart.getTime());
+		dateStart.setDate(dateStart.getDate() - FIND_PERIOD_DAYS);
+		dateEnd.setDate(dateEnd.getDate() + FIND_PERIOD_DAYS);
+		const similarExpenses = expenses.filter(exp => {
+			const expDate = convertStrToDate(exp.expense_date);
+			if (!expDate || !expense.amount) {
+				return false;
+			}
+			return (
+				areFloatsEqual(exp.amount, expense.amount) &&
+				dateStart <= expDate &&
+				dateEnd >= expDate
+			);
+		});
+		return similarExpenses;
+	};
 	return (
 		<ExpenseContext.Provider
 			value={{
@@ -133,6 +156,7 @@ const ExpenseProvider = (props: ProviderProps) => {
 				setExpenseSnapshot: setExpenseSnapshotAndFile,
 				validateExpense,
 				cleanExpense,
+				getSimilarExpenses,
 			}}>
 			{props.children}
 		</ExpenseContext.Provider>
