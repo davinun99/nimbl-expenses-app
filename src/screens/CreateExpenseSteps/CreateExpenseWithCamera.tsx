@@ -96,7 +96,13 @@ const CreateExpenseWithCamera = ({ navigation }: Props) => {
 			isCompleted = await createExpense(newExpense);
 		} else {
 			//Match, update existing
-			isCompleted = await updateExpense(newExpense, matchExpenseId);
+			isCompleted = await updateExpense(
+				{
+					...newExpense,
+					is_reconciled: true,
+				},
+				matchExpenseId,
+			);
 		}
 		if (isCompleted) {
 			getExpenses();

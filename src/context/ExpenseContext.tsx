@@ -159,15 +159,16 @@ const ExpenseProvider = (props: ProviderProps) => {
 		if (!existingExpense) {
 			return false;
 		}
-		const _updatedExpense = {
+		const _updatedExpense: any = {
 			file: updatedExpense.file,
+			is_reconciled: true,
 		};
-		for (const property in updatedExpense) {
-			// @ts-ignore: "Any" type error
-			if (!existingExpense[property] && updatedExpense[property]) {
-				// @ts-ignore: "Any" type error
-				_updatedExpense[property] = updatedExpense[property];
-			}
+		const { expense_category_id, expense_description } = updatedExpense;
+		if (expense_category_id) {
+			_updatedExpense.expense_category_id = expense_category_id;
+		}
+		if (expense_description) {
+			_updatedExpense.expense_description = expense_description;
 		}
 		try {
 			await axiosClient.put(
