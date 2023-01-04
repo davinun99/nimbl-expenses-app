@@ -1,5 +1,5 @@
 import { Button, Modal, VStack, Text, Checkbox, HStack } from 'native-base';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 // import { Feather } from 'react-native-feather';
 import { Expense } from '../helpers/types';
 import SimilarExpenseItem from './SimilarExpenseItem';
@@ -18,6 +18,11 @@ const ModalSimilarExpenses = ({
 }: Props) => {
 	const [selectedId, setSelectedId] = useState('');
 	const [isLoading, setIsLoading] = useState(false);
+	useEffect(() => {
+		if (similarExpenses.length) {
+			setSelectedId(`${similarExpenses[0].expense_id}`);
+		}
+	}, [similarExpenses]);
 	const handleSave = async () => {
 		setIsLoading(true);
 		await handleMatchExpense(Number(selectedId));
