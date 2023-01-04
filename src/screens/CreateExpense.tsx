@@ -37,7 +37,7 @@ type CreateExpenseProps = NativeStackScreenProps<
 >;
 const CreateExpense = ({ navigation }: CreateExpenseProps) => {
 	const [assetFile, setAssetFile] = useState<Asset | null>(null);
-	const { isOpen, onOpen, onClose } = useDisclose();
+	const [expDate, setExpDate] = useState(new Date());
 	const [expense, setExpense] = useState<NewExpense>({
 		expense_description: '',
 		amount: 0,
@@ -47,7 +47,7 @@ const CreateExpense = ({ navigation }: CreateExpenseProps) => {
 		expense_pay_method_id: '',
 		source: 'Phone App',
 	});
-	const [expDate, setExpDate] = useState(new Date());
+	const { isOpen, onOpen, onClose } = useDisclose();
 	const {
 		expensesAreLoading,
 		expenseErrorMessage,
@@ -56,6 +56,7 @@ const CreateExpense = ({ navigation }: CreateExpenseProps) => {
 	} = useContext(ExpenseContext);
 	const { categories } = useContext(ExpendCategoryContext);
 	const { paymentMethods } = useContext(PayMethodContext);
+
 	useEffect(() => {
 		const defaultPayMethod = paymentMethods.find(p => p.is_default_card);
 		if (defaultPayMethod) {

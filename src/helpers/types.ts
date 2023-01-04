@@ -45,6 +45,7 @@ export type ExpensePayMethod = {
 };
 
 export type NewExpense = {
+	is_reconciled?: boolean | null;
 	amount: number | null;
 	expense_category_id: string;
 	expense_currency: string;

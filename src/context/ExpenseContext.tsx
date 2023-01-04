@@ -8,8 +8,10 @@ import {
 } from '../helpers/types';
 import { AxiosError } from 'axios';
 import { PhotoFile } from 'react-native-vision-camera';
-import { getFile } from '../helpers';
+import { areFloatsEqual, convertStrToDate, getFile } from '../helpers';
 import { PayMethodContext } from './PaymentMethodContext';
+
+const FIND_PERIOD_DAYS = 15;
 
 interface ExpenseContextInterface {
 	expenses: Expense[];
@@ -18,11 +20,16 @@ interface ExpenseContextInterface {
 	newExpense: NewExpenseWithFile;
 	expenseSnapshot: PhotoFile | null;
 	createExpense: (exp: NewExpenseWithFile) => Promise<boolean>;
+	updateExpense: (
+		exp: NewExpenseWithFile,
+		existingExpenseId: number,
+	) => Promise<boolean>;
 	getExpenses: () => Promise<boolean>;
 	setNewExpense: (e: NewExpenseWithFile) => void;
 	setExpenseSnapshot: (f: PhotoFile | null) => void;
 	validateExpense: () => boolean;
 	cleanExpense: () => void;
+	getSimilarExpenses: (expense: NewExpenseWithFile) => Expense[];
 }
 
 export const ExpenseContext = createContext({} as ExpenseContextInterface);
@@ -118,7 +125,67 @@ const ExpenseProvider = (props: ProviderProps) => {
 		setNewExpense(_cleanExpense);
 		setExpenseSnapshot(null);
 	};
-
+	const getSimilarExpenses = (expense: NewExpenseWithFile) => {
+		const dateStart = convertStrToDate(expense.expense_date);
+		if (!dateStart) {
+			return [];
+		}
+		const dateEnd = new Date(dateStart.getTime());
+		dateStart.setDate(dateStart.getDate() - FIND_PERIOD_DAYS);
+		dateEnd.setDate(dateEnd.getDate() + FIND_PERIOD_DAYS);
+		const similarExpenses = expenses.filter(exp => {
+			const expDate = convertStrToDate(exp.expense_date);
+			if (!expDate || !expense.amount) {
+				return false;
+			}
+			return (
+				areFloatsEqual(exp.amount, expense.amount) &&
+				dateStart <= expDate &&
+				dateEnd >= expDate
+			);
+		});
+		return similarExpenses;
+	};
+	const updateExpense = async (
+		updatedExpense: NewExpenseWithFile,
+		existingExpenseId: number,
+	) => {
+		setExpensesAreLoading(true);
+		let isCompleted = false;
+		//Now just update the file? In the future set more fields!
+		const existingExpense = expenses.find(
+			e => e.expense_id === existingExpenseId,
+		);
+		if (!existingExpense) {
+			return false;
+		}
+		const _updatedExpense: any = {
+			file: updatedExpense.file,
+			is_reconciled: true,
+		};
+		const { expense_category_id, expense_description } = updatedExpense;
+		if (expense_category_id) {
+			_updatedExpense.expense_category_id = expense_category_id;
+		}
+		if (expense_description) {
+			_updatedExpense.expense_description = expense_description;
+		}
+		try {
+			await axiosClient.put(
+				`/expense/${existingExpenseId}`,
+				_updatedExpense,
+			);
+			isCompleted = true;
+		} catch (error) {
+			const err = error as AxiosError;
+			const errorMsg = err.response?.data
+				? `${err.response.data}`
+				: `There was an error creating your expense, please try again later: ${err.message}`;
+			setExpenseErrorMessage(errorMsg);
+		}
+		setExpensesAreLoading(false);
+		return isCompleted;
+	};
 	return (
 		<ExpenseContext.Provider
 			value={{
@@ -127,12 +194,14 @@ const ExpenseProvider = (props: ProviderProps) => {
 				expenseErrorMessage,
 				newExpense,
 				expenseSnapshot,
+				updateExpense,
 				getExpenses,
 				createExpense,
 				setNewExpense,
 				setExpenseSnapshot: setExpenseSnapshotAndFile,
 				validateExpense,
 				cleanExpense,
+				getSimilarExpenses,
 			}}>
 			{props.children}
 		</ExpenseContext.Provider>
